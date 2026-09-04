@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FIELD ATLAS — SKILLING OUTCOMES PLATFORM
 
 A production-grade, responsive skills and employment outcomes platform for India. Field Atlas connects training completion with longitudinal post-placement signal, providing tailored operational interfaces for **Trainers** and **Trainees**, 11-language localization (including dynamic RTL for Urdu), email OTP authentication, and real SQL persistence via Django 5+ and Django REST Framework.
@@ -221,3 +222,7 @@ Covering:
 1. **Email Service**: Defaults to Django Console Email Backend (`EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`) for local development so 6-digit OTPs display cleanly in the terminal. For production, configure standard SMTP credentials in `.env` (`EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`).
 2. **SMS & WhatsApp Gateway**: Outreach actions are explicitly tagged as simulated/demo. In accordance with the prompt, no real SMS or WhatsApp messages are sent without external gateway credentials (e.g. Twilio / Gupshup).
 3. **Aadhaar Privacy**: In strict compliance with civic cartography principles, raw Aadhaar numbers are never collected or stored; only pseudonymous Unified IDs are utilized.
+=======
+# SkillPulse
+Employment Outcome Intelligence Platform  From Training Completion to Real-World Employment Impact.
+>>>>>>> 86e21b3c7047bbf386a5f9c9b225b7b9241fe34c
