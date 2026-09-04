@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile & Account Settings — Field Atlas{% endblock %}
+
+{% block content %}
+<div class="app-container" style="background-color: var(--color-parchment); min-height: 100vh;">
+  <div class="main-wrapper" style="margin-left: 0; width: 100%; max-width: 860px; margin: 0 auto; padding-bottom: 4rem;">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <a href="{% if user.role == 'trainee' %}/trainee/{% else %}/trainer/{% endif %}" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.35rem;">
+          <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i> Back to Dashboard
+        </a>
+      </div>
+      <div class="header-right">
+        <a href="#logout" class="btn btn-outline btn-sm btn-logout" style="color: var(--color-coral);">
+          <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Sign out
+        </a>
+      </div>
+    </header>
+
+    <div class="content-body" style="padding: 1.5rem;">
+      <div style="margin-bottom: 1.75rem;">
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--color-deep-indigo);">Account & Profile Settings</h1>
+        <p style="font-size: 0.85rem; color: var(--color-text-muted);">Manage your personal information, interface language, and security credentials.</p>
+      </div>
+
+      <!-- Avatar & Identity Summary Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; box-shadow: var(--shadow-sm);">
+        <div style="position: relative;">
+          <img id="profile-avatar-preview" src="/static/images/avatar-placeholder.png" onerror="this.src='https://ui-avatars.com/api/?name={{ user.full_name|urlencode }}&background=0E8176&color=fff&size=128'" alt="Profile Photo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-border);">
+          <label for="profile-photo-input" style="position: absolute; bottom: 0; right: 0; background: var(--color-teal); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" title="Change Photo">
+            <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+          </label>
+          <input type="file" id="profile-photo-input" accept="image/*" style="display: none;">
+        </div>
+
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--color-deep-indigo);">{{ user.full_name }}</h2>
+          <div style="font-size: 0.85rem; color: var(--color-text-muted); font-family: var(--font-mono);">Field Atlas ID: {{ user.field_atlas_id }}</div>
+          <div style="margin-top: 0.35rem;">
+            <span class="badge badge-teal">{{ user.role|title }}</span>
+            <span class="badge badge-indigo">{{ user.provider|default:"National Network" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- General Details Form Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-deep-indigo); margin-bottom: 1.25rem;">Personal Details</h3>
+        
+        <form id="profile-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="profile-name">Full Name</label>
+              <input type="text" id="profile-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-email">Email Address</label>
+              <input type="email" id="profile-email" class="form-control" disabled style="background-color: var(--color-parchment);">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="profile-phone">Phone Number</label>
+              <input type="text" id="profile-phone" class="form-control" placeholder="+91 98765 43210">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-language">Preferred Language</label>
+              <select id="profile-language" class="form-control">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="ur">اردو (Urdu)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="profile-district">District</label>
+              <input type="text" id="profile-district" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-state">State</label>
+              <input type="text" id="profile-state" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="profile-address">Address</label>
+            <textarea id="profile-address" class="form-control" rows="2" placeholder="Postal residential or office address..."></textarea>
+          </div>
+
+          {% if user.role != 'trainee' %}
+          <div class="form-group">
+            <label class="form-label" for="profile-bio">Professional Bio</label>
+            <textarea id="profile-bio" class="form-control" rows="3" placeholder="Brief summary of experience, certifications, and mentorship focus..."></textarea>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;" data-i18n="save_changes">Save Changes</button>
+        </form>
+      </div>
+
+      <!-- Password Change Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-deep-indigo); margin-bottom: 1.25rem;">Security & Password</h3>
+        
+        <form id="change-password-form">
+          <div class="form-group">
+            <label class="form-label" for="current-password">Current Password</label>
+            <input type="password" id="current-password" class="form-control" required autocomplete="current-password">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="new-password">New Password</label>
+              <input type="password" id="new-password" class="form-control" minlength="6" required autocomplete="new-password">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="confirm-password">Confirm New Password</label>
+              <input type="password" id="confirm-password" class="form-control" minlength="6" required autocomplete="new-password">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-outline">Update Password</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/profile.js"></script>
+{% endblock %}

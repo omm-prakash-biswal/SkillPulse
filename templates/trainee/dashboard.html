@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Learner Portal — Field Atlas{% endblock %}
+
+{% block content %}
+<div class="app-container" style="background-color: var(--color-parchment); min-height: 100vh;">
+  
+  <div class="main-wrapper" style="margin-left: 0; width: 100%; max-width: 900px; margin: 0 auto; padding-bottom: 5rem;">
+    
+    <!-- Top Header for Learner -->
+    <header class="top-header" style="justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="brand-logo-icon" style="width: 32px; height: 32px;">
+          <i data-lucide="compass" style="width: 18px; height: 18px;"></i>
+        </div>
+        <span style="font-weight: 800; font-size: 1.1rem; color: var(--color-deep-indigo);" data-i18n="brand_name">Field Atlas</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="lang-selector-wrap">
+          <select class="lang-select" aria-label="Select Interface Language">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+            <option value="ur">اردو (Urdu)</option>
+          </select>
+          <i data-lucide="globe" class="lang-icon" style="width: 14px; height: 14px;"></i>
+        </div>
+
+        <a href="/profile/" class="btn btn-outline btn-sm" title="My Profile" style="min-height: 38px;">
+          <i data-lucide="user" style="width: 15px; height: 15px;"></i>
+        </a>
+        <a href="#logout" class="btn btn-outline btn-sm btn-logout" title="Sign out" style="color: var(--color-coral); min-height: 38px;">
+          <i data-lucide="log-out" style="width: 15px; height: 15px;"></i>
+        </a>
+      </div>
+    </header>
+
+    <div class="content-body" style="padding: 1.25rem;">
+      
+      <!-- Welcome Hero Card -->
+      <div class="trainee-welcome-card">
+        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85;" data-i18n="trainee_welcome">Welcome back,</div>
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: #FFFFFF; margin: 0.25rem 0;" id="trainee-name-display">{{ user.full_name }}</h1>
+        <div style="font-size: 0.95rem; opacity: 0.9;" id="trainee-course-display">Vocational Skilling Programme</div>
+        <div style="font-size: 0.75rem; opacity: 0.75; font-family: var(--font-mono); margin-top: 0.35rem;" id="trainee-id-display">{{ user.field_atlas_id }}</div>
+
+        <!-- Stage Timeline Rail -->
+        <div class="trainee-stage-rail">
+          <div class="trainee-stage-step" data-step="0">
+            <div class="trainee-stage-dot">1</div>
+            <span class="trainee-stage-text" data-i18n="route_enrolled">Enrolled</span>
+          </div>
+          <div class="trainee-stage-step" data-step="1">
+            <div class="trainee-stage-dot">2</div>
+            <span class="trainee-stage-text" data-i18n="route_trained">Trained</span>
+          </div>
+          <div class="trainee-stage-step" data-step="2">
+            <div class="trainee-stage-dot">3</div>
+            <span class="trainee-stage-text" data-i18n="route_certified">Certified</span>
+          </div>
+          <div class="trainee-stage-step" data-step="3">
+            <div class="trainee-stage-dot">4</div>
+            <span class="trainee-stage-text" data-i18n="route_placed">Placed</span>
+          </div>
+          <div class="trainee-stage-step" data-step="4">
+            <div class="trainee-stage-dot">5</div>
+            <span class="trainee-stage-text" data-i18n="route_retained">Retained</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Completion Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; box-shadow: var(--shadow-sm);">
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-deep-indigo); margin-bottom: 0.25rem;">Profile Completeness</div>
+          <div style="font-size: 0.8rem; color: var(--color-text-muted);">Ensure contact details are up to date for verified certification.</div>
+          <div class="progress-bar-bg" style="margin-top: 0.6rem; height: 8px;">
+            <div class="progress-bar-fill" id="trainee-completion-bar" style="width: 85%;"></div>
+          </div>
+        </div>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-teal);" id="trainee-completion-pct">85%</div>
+      </div>
+
+      <!-- Employment Status & Placement Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);">Current Employment Record</strong>
+          <span class="badge badge-teal" id="placement-status">VERIFIED</span>
+        </div>
+
+        <div id="trainee-placement-card" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Employer / Enterprise</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-indigo);" id="placement-employer">—</div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--color-text-muted); text-transform: uppercase;">Job Role</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-indigo);" id="placement-role">—</div>
+            </div>
+          </div>
+          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; color: var(--color-text-muted);">Reported Monthly Wage:</span>
+            <strong style="font-size: 1.2rem; color: var(--color-teal);" id="placement-wage">—</strong>
+          </div>
+        </div>
+
+        <div id="trainee-placement-empty" style="text-align: center; padding: 1.5rem; color: var(--color-text-muted);">
+          No formal placement recorded yet. Update your check-in below once you secure employment.
+        </div>
+      </div>
+
+      <!-- Upcoming Check-In Card with Direct Response Buttons -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);">Employment Check-In</strong>
+          <span class="badge badge-ochre">Response Needed</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 1.25rem;" id="trainee-checkin-prompt">
+          How has your employment progressed recently? Select an option below to update your coordinator:
+        </p>
+
+        <div class="trainee-action-grid">
+          <button class="trainee-action-btn" id="btn-trainee-working">
+            <i data-lucide="briefcase" style="width: 22px; height: 22px; color: var(--color-teal);"></i>
+            <span data-i18n="trainee_btn_work">I am working</span>
+          </button>
+          <button class="trainee-action-btn" id="btn-trainee-business">
+            <i data-lucide="store" style="width: 22px; height: 22px; color: var(--color-ochre);"></i>
+            <span data-i18n="trainee_btn_business">I run my own business</span>
+          </button>
+          <button class="trainee-action-btn" id="btn-trainee-support">
+            <i data-lucide="help-circle" style="width: 22px; height: 22px; color: var(--color-coral);"></i>
+            <span data-i18n="trainee_btn_support">I need support</span>
+          </button>
+        </div>
+
+        <div id="trainee-checkin-empty" style="display: none; text-align: center; padding: 1rem; color: var(--color-teal);">
+          ✓ You are up to date! Next scheduled check-in is pending.
+        </div>
+      </div>
+
+      <!-- Consent Management & Progress Download Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);">Data Consent & Privacy</strong>
+            <div style="font-size: 0.8rem; color: var(--color-text-muted);">You own your data. You may withdraw consent at any time.</div>
+          </div>
+          <span class="badge badge-teal" id="trainee-consent-badge">Active & Protected</span>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn btn-outline btn-sm" id="btn-toggle-my-consent">Withdraw Consent</button>
+          <button class="btn btn-primary btn-sm" id="btn-trainee-download-report">
+            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+            <span data-i18n="trainee_download_report">Download My Progress Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trainer Support Card -->
+      <div style="background: rgba(14, 129, 118, 0.08); border: 1px solid rgba(14, 129, 118, 0.2); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+        <div>
+          <strong style="color: var(--color-deep-indigo); font-size: 0.95rem;">Need guidance or certification help?</strong>
+          <div style="font-size: 0.8rem; color: var(--color-text-muted);">Reach out to your assigned training provider coordinator.</div>
+        </div>
+        <a href="/profile/" class="btn btn-outline btn-sm">Contact Support</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/trainee-dashboard.js"></script>
+{% endblock %}

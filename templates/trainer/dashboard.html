@@ -1,0 +1,802 @@
+{% extends 'base.html' %}
+
+{% block title %}Field Atlas — Trainer Operations & Outcomes Dashboard{% endblock %}
+
+{% block content %}
+<div class="app-container">
+  
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div class="mobile-backdrop" id="mobile-backdrop"></div>
+
+  <!-- Main Fixed / Drawer Sidebar -->
+  <aside class="sidebar" id="app-sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="brand-badge">
+        <div class="brand-logo-icon">
+          <i data-lucide="compass" style="width: 22px; height: 22px;"></i>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title" data-i18n="brand_name">Field Atlas</span>
+          <span class="brand-subtitle">Outcomes Platform</span>
+        </div>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Programme Operations</div>
+      <a class="nav-link active" data-tab="overview">
+        <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_overview">Overview</span>
+      </a>
+      <a class="nav-link" data-tab="followups">
+        <i data-lucide="phone-call" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_followups">Follow-ups</span>
+      </a>
+      <a class="nav-link" data-tab="trainees">
+        <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_trainees">Trainees</span>
+      </a>
+      <a class="nav-link" data-tab="providers">
+        <i data-lucide="building-2" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_providers">Providers</span>
+      </a>
+      <a class="nav-link" data-tab="reports">
+        <i data-lucide="file-bar-chart" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_reports">Reports</span>
+      </a>
+
+      <div class="nav-group-label" style="margin-top: 1.5rem;">Account</div>
+      <a class="nav-link" href="/profile/">
+        <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_profile">Profile & Settings</span>
+      </a>
+      <a class="nav-link btn-logout" href="#logout" style="color: #F87171;">
+        <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+        <span data-i18n="nav_logout">Sign out</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Footer with User Details -->
+    <div class="sidebar-footer">
+      <div class="user-quick-profile">
+        <div class="avatar-sm">
+          {% if user.profile_photo %}
+            <img src="{{ user.profile_photo.url }}" alt="{{ user.full_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+          {% else %}
+            {{ user.full_name|slice:":1"|upper }}
+          {% endif %}
+        </div>
+        <div class="user-profile-info">
+          <div class="user-profile-name">{{ user.full_name|default:"Trainer" }}</div>
+          <div class="user-profile-role">
+            <i data-lucide="award" style="width: 12px; height: 12px;"></i>
+            <span>{{ user.role|title }} · {{ user.provider|default:"Saksham" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Viewport Content Area -->
+  <div class="main-wrapper">
+    
+    <!-- Top Sticky Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="mobile-drawer-toggle" id="mobile-drawer-toggle" aria-label="Toggle navigation menu">
+          <i data-lucide="menu" style="width: 22px; height: 22px;"></i>
+        </button>
+        <div class="header-breadcrumb">
+          <span style="color: var(--color-teal); font-weight: 700;">Good Outcomes</span>
+          <span style="color: var(--color-border); font-size: 1.2rem;">/</span>
+          <span id="header-active-view-name">Overview</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Multi-Language Selector Dropdown -->
+        <div class="lang-selector-wrap">
+          <select class="lang-select" aria-label="Select Interface Language">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="ml">മലയാളം (Malayalam)</option>
+            <option value="ur">اردو (Urdu)</option>
+          </select>
+          <i data-lucide="globe" class="lang-icon" style="width: 15px; height: 15px;"></i>
+        </div>
+
+        <a href="/profile/" style="text-decoration: none;" title="Edit profile">
+          <div class="avatar-sm" style="background-color: var(--color-teal); cursor: pointer;">
+            {{ user.full_name|slice:":1"|upper }}
+          </div>
+        </a>
+      </div>
+    </header>
+
+    <main class="content-body">
+      
+      <!-- ============================================== -->
+      <!-- VIEW 1: OVERVIEW -->
+      <!-- ============================================== -->
+      <section class="tab-view-panel" id="view-overview">
+        
+        <!-- Hero Card -->
+        <div class="hero-card">
+          <div class="hero-content">
+            <span class="eyebrow" data-i18n="hero_eyebrow">Programme pulse / Q3 2026</span>
+            <h1 class="hero-title" data-i18n="hero_title">The work after training matters.</h1>
+            <p class="hero-description" data-i18n="hero_desc">See the journey from training to lasting work.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-download-impact-csv">
+                <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="btn_export_brief">Export impact brief</span>
+              </button>
+              <button class="btn btn-secondary" onclick="FieldAtlasAPI.openModal('modal-methodology')">
+                <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="btn_view_methodology">View methodology</span>
+              </button>
+            </div>
+            <div class="hero-privacy-note">
+              <i data-lucide="shield-check" style="width: 14px; height: 14px; color: #38BDF8;"></i>
+              <span data-i18n="privacy_note">Consent-aware by design · No raw Aadhaar stored</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome Route Timeline -->
+        <div class="route-timeline-card">
+          <div class="route-timeline-title">Outcome Route Pipeline (Enrolled → Retained)</div>
+          <div class="route-steps-grid">
+            <div class="route-step-item active">
+              <div class="route-step-circle">1</div>
+              <div class="route-step-label" data-i18n="route_enrolled">Enrolled</div>
+              <div class="route-step-count">8.4k</div>
+            </div>
+            <div class="route-step-item active">
+              <div class="route-step-circle">2</div>
+              <div class="route-step-label" data-i18n="route_trained">Trained</div>
+              <div class="route-step-count">7.8k</div>
+            </div>
+            <div class="route-step-item active">
+              <div class="route-step-circle">3</div>
+              <div class="route-step-label" data-i18n="route_certified">Certified</div>
+              <div class="route-step-count">6.9k</div>
+            </div>
+            <div class="route-step-item active">
+              <div class="route-step-circle">4</div>
+              <div class="route-step-label" data-i18n="route_placed">Placed</div>
+              <div class="route-step-count">5.4k</div>
+            </div>
+            <div class="route-step-item active">
+              <div class="route-step-circle">5</div>
+              <div class="route-step-label" data-i18n="route_retained">Retained</div>
+              <div class="route-step-count">3.7k</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Metric KPI Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="metric_active">Active trainees</span>
+              <div class="metric-icon-wrap" style="background: rgba(14, 129, 118, 0.1); color: var(--color-teal);">
+                <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="metric-value">8,420</div>
+            <div class="metric-subtext">
+              <span class="badge-growth">↑ +8.4%</span>
+              <span style="color: var(--color-text-muted);">vs previous quarter</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="metric_retention">12-month retention</span>
+              <div class="metric-icon-wrap" style="background: rgba(73, 97, 139, 0.1); color: var(--color-indigo-blue);">
+                <i data-lucide="check-circle-2" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="metric-value">68.4%</div>
+            <div class="metric-subtext">
+              <span class="badge-growth">↑ +5.2 pts</span>
+              <span style="color: var(--color-text-muted);">sustained employment</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="metric_wage">Median wage</span>
+              <div class="metric-icon-wrap" style="background: rgba(214, 149, 65, 0.1); color: var(--color-ochre);">
+                <i data-lucide="indian-rupee" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="metric-value">₹15,800</div>
+            <div class="metric-subtext">
+              <span class="badge-growth">↑ +12.1%</span>
+              <span style="color: var(--color-text-muted);">post-training progression</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title" data-i18n="metric_followup">Needs human follow-up</span>
+              <div class="metric-icon-wrap" style="background: rgba(213, 111, 88, 0.1); color: var(--color-coral);">
+                <i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="metric-value">124</div>
+            <div class="metric-subtext">
+              <span class="badge-urgent">12 urgent</span>
+              <span style="color: var(--color-text-muted);">in assisted queue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid 1: Wage Progression & Conversion Funnel -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title" data-i18n="chart_wage_title">Wage progression curve</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_wage_sub">Realized earnings vs baseline floor</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="wageProgressionCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title" data-i18n="chart_funnel_title">Cohort conversion funnel</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_funnel_sub">End-to-end completion & placement efficiency</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="funnelConversionCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid 2: Provider Pulse Leaderboard & Non-Placement Donut -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title" data-i18n="chart_providers_title">Provider pulse leaderboard</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);">Placement & retention rates by district hub</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="providerPulseCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <div class="chart-card-title" data-i18n="chart_diagnostics_title">Non-placement diagnostics</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);">Root cause breakdown for participants not placed</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="nonPlacementCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 2: FOLLOW-UPS -->
+      <!-- ============================================== -->
+      <section class="tab-view-panel" id="view-followups" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-indigo);" data-i18n="followup_heading">Small calls. Long-term signal.</h2>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted);" data-i18n="followup_summary">124 people need help · 86 three-month · 38 twelve-month · 72% resolved</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-outline btn-seed-demo-trigger">
+              <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+              <span data-i18n="btn_seed_demo">Seed demo data</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Follow-up Layout: Queue + Outreach Simulator -->
+        <div class="followup-layout">
+          
+          <!-- Queue Priority List -->
+          <div class="followup-queue-card">
+            <div class="queue-header">
+              <strong style="font-size: 0.95rem; color: var(--color-deep-indigo);">Priority Assistance Queue</strong>
+              <span class="badge badge-ochre">Live Queue</span>
+            </div>
+            <div class="queue-items-list" id="followup-queue-list">
+              <!-- Dynamically rendered items -->
+            </div>
+          </div>
+
+          <!-- Outreach Simulator & Message Preview Shell -->
+          <div class="simulator-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <div>
+                <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);" id="preview-trainee-name">Select Participant</strong>
+                <div style="font-size: 0.75rem; color: var(--color-text-muted);" id="preview-trainee-course">Select a row to preview outreach context</div>
+              </div>
+              <span class="badge badge-neutral" id="preview-trainee-id">FA-ID</span>
+            </div>
+
+            <!-- Channel Selector Tabs -->
+            <div class="simulator-tabs">
+              <button class="simulator-tab-btn active" data-channel="whatsapp">
+                <i data-lucide="message-square" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> WhatsApp Preview
+              </button>
+              <button class="simulator-tab-btn" data-channel="sms">
+                <i data-lucide="smartphone" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> SMS Preview
+              </button>
+            </div>
+
+            <!-- Simulated Phone Device Preview -->
+            <div class="phone-preview-shell">
+              <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">
+                <div class="avatar-sm" style="background: var(--color-teal); width: 28px; height: 28px; font-size: 0.75rem;">FA</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-deep-indigo);">Field Atlas Outreach Bot (Demo)</div>
+              </div>
+
+              <div class="message-bubble" id="simulator-message-text">
+                Namaste, this is Field Atlas checking in on your employment progress. Could you please share your current work status?
+              </div>
+
+              <div style="margin-top: 1.5rem;">
+                <div style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.4rem;">Simulated Learner Response Options:</div>
+                <div class="simulator-response-actions">
+                  <span class="badge badge-teal" style="cursor: pointer;">✓ I am working</span>
+                  <span class="badge badge-ochre" style="cursor: pointer;">💼 Own work / Enterprise</span>
+                  <span class="badge badge-coral" style="cursor: pointer;">🆘 Need help</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Consent & Dispatch Status Bar -->
+            <div style="margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <div id="simulator-status-note" style="font-size: 0.8rem;">
+                <span style="color: var(--color-teal);">✓ Consent verified active. Safe to contact.</span>
+              </div>
+              <button class="btn btn-primary" id="btn-dispatch-followup">
+                <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                <span data-i18n="btn_send_now">Send outreach</span>
+              </button>
+            </div>
+
+            <div style="margin-top: 0.75rem; font-size: 0.725rem; color: var(--color-text-muted);">
+              Note: Outreach actions are executed within the simulated sandbox framework. No live carrier SMS or WhatsApp messages are dispatched without external gateway binding.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 3: TRAINEES -->
+      <!-- ============================================== -->
+      <section class="tab-view-panel" id="view-trainees" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-indigo);" data-i18n="nav_trainees">Trainees Directory</h2>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted);">Search, filter, enroll, and manage consent for all programme participants.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="FieldAtlasAPI.openModal('modal-new-trainee')">
+              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
+              <span data-i18n="btn_new_trainee">New trainee</span>
+            </button>
+            <button class="btn btn-outline btn-seed-demo-trigger">
+              <i data-lucide="database" style="width: 16px; height: 16px;"></i>
+              <span data-i18n="btn_seed_demo">Seed demo data</span>
+            </button>
+            <button class="btn btn-outline btn-download-impact-csv">
+              <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+              <span data-i18n="btn_export_csv">Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Card with Search & Filters -->
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="table-search-wrap">
+              <i data-lucide="search" class="search-icon" style="width: 16px; height: 16px;"></i>
+              <input type="text" id="trainee-search-input" class="search-input" placeholder="Search by name, Field Atlas ID, or course..." data-i18n-placeholder="search_placeholder">
+            </div>
+
+            <div class="filter-group">
+              <select class="filter-select" id="filter-provider">
+                <option value="" data-i18n="filter_all_providers">All Providers</option>
+                <option value="Saksham">Saksham</option>
+                <option value="Jan Disha">Jan Disha</option>
+                <option value="Udaan">Udaan</option>
+                <option value="Navjeevan">Navjeevan</option>
+              </select>
+
+              <select class="filter-select" id="filter-stage">
+                <option value="" data-i18n="filter_all_stages">All Stages</option>
+                <option value="enrolled">Enrolled</option>
+                <option value="trained">Trained</option>
+                <option value="certified">Certified</option>
+                <option value="placed">Placed</option>
+                <option value="retained">Retained</option>
+                <option value="follow_up_due">Follow-up Due</option>
+              </select>
+
+              <select class="filter-select" id="filter-consent">
+                <option value="" data-i18n="filter_all_consents">All Consents</option>
+                <option value="active">Active Consent</option>
+                <option value="withdrawn">Consent Withdrawn</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="th_learner">Learner</th>
+                  <th data-i18n="th_stage">Current stage</th>
+                  <th data-i18n="th_provider">Provider</th>
+                  <th data-i18n="th_signal">Employer signal</th>
+                  <th data-i18n="th_wage">Wage</th>
+                  <th data-i18n="trainee_consent_label">Consent</th>
+                  <th data-i18n="th_actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="trainees-table-body">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 4: PROVIDERS -->
+      <!-- ============================================== -->
+      <section class="tab-view-panel" id="view-providers" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-indigo);" data-i18n="nav_providers">Training Providers Benchmark</h2>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted);">Comparative placement, retention, and employer verification across regional partners.</p>
+          </div>
+          <button class="btn btn-outline btn-download-provider-csv">
+            <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+            <span>Export Provider CSV</span>
+          </button>
+        </div>
+
+        <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="metric-card">
+            <div class="metric-title">Placement Leadership</div>
+            <div class="metric-value">78%</div>
+            <div class="metric-subtext">Saksham (Pune) leads Q3 cohort</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">12-Month Sustained Retention</div>
+            <div class="metric-value">69%</div>
+            <div class="metric-subtext">Verified formal sector contracts</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Employer Validation Rate</div>
+            <div class="metric-value">75%</div>
+            <div class="metric-subtext">Confirmed via third-party payroll signal</div>
+          </div>
+        </div>
+
+        <div class="charts-grid" style="grid-template-columns: 1.5fr 1fr;">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">Placement & Retention Comparison</div>
+            </div>
+            <div class="chart-container">
+              <canvas id="providerComparisonCanvas"></canvas>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div class="provider-pulse-item" style="background: var(--color-surface); padding: 1.5rem; border-radius: var(--radius-lg);">
+              <div class="eyebrow" style="color: var(--color-teal); margin-bottom: 0.4rem;">District Insight</div>
+              <h3 style="font-size: 1.15rem; color: var(--color-deep-indigo); margin-bottom: 0.5rem;">"West Maharashtra is retaining talent longer."</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5;">
+                Solar installer and accounting cohorts in Pune report 69% 12-month retention, outpacing eastern hubs where migration shifts talent into informal trades.
+              </p>
+            </div>
+
+            <div class="provider-pulse-item" style="background: var(--color-surface); padding: 1.5rem; border-radius: var(--radius-lg);">
+              <div class="eyebrow" style="color: var(--color-ochre); margin-bottom: 0.4rem;">Employer Verification</div>
+              <h3 style="font-size: 1.15rem; color: var(--color-deep-indigo); margin-bottom: 0.5rem;">75% Validation Level</h3>
+              <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5;">
+                Three out of four placed learners have their employment confirmed directly by employer verification or documented bank wage credit.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 5: REPORTS -->
+      <!-- ============================================== -->
+      <section class="tab-view-panel" id="view-reports" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--color-deep-indigo);" data-i18n="nav_reports">Evidence & Governance Reports</h2>
+          <p style="font-size: 0.875rem; color: var(--color-text-muted);">Download audit-logged outcome briefs and partner performance CSV files.</p>
+        </div>
+
+        <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Quarterly Impact Brief</span>
+              <i data-lucide="file-check" style="width: 20px; height: 20px; color: var(--color-teal);"></i>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin: 0.5rem 0 1.25rem;">
+              Full cohort trajectory, completion-to-wage multipliers, and gender progression metrics for Q3 2026.
+            </p>
+            <button class="btn btn-primary btn-sm btn-download-impact-csv" style="width: 100%;">
+              <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download Impact CSV
+            </button>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Provider Benchmark Report</span>
+              <i data-lucide="bar-chart-2" style="width: 20px; height: 20px; color: var(--color-indigo-blue);"></i>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin: 0.5rem 0 1.25rem;">
+              Provider retention curves, employer validation rates, and geographic diagnostics.
+            </p>
+            <button class="btn btn-outline btn-sm btn-download-provider-csv" style="width: 100%;">
+              <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download Provider CSV
+            </button>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Diagnostics & Non-Placement</span>
+              <i data-lucide="pie-chart" style="width: 20px; height: 20px; color: var(--color-coral);"></i>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin: 0.5rem 0 1.25rem;">
+              Granular analysis of skill mismatch, relocation hurdles, and wage floor friction.
+            </p>
+            <button class="btn btn-outline btn-sm btn-download-impact-csv" style="width: 100%;">
+              <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download Diagnostics CSV
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <h3 style="font-size: 1.1rem; color: var(--color-deep-indigo); margin-bottom: 0.5rem;">Data Privacy & Governance Compliance</h3>
+          <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.6;">
+            All CSV and analytical exports strictly respect individual participant consent. Trainees who have withdrawn consent have their unified IDs truncated and sensitive personal identifiers masked. Every report generation event is timestamped and recorded in the system audit log.
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+      <div class="bottom-nav-inner">
+        <a class="bottom-nav-item active" data-tab="overview">
+          <i data-lucide="layout-dashboard" style="width: 20px; height: 20px;"></i>
+          <span data-i18n="nav_overview">Overview</span>
+        </a>
+        <a class="bottom-nav-item" data-tab="followups">
+          <i data-lucide="phone-call" style="width: 20px; height: 20px;"></i>
+          <span data-i18n="nav_followups">Follow-ups</span>
+        </a>
+        <a class="bottom-nav-item" data-tab="trainees">
+          <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+          <span data-i18n="nav_trainees">Trainees</span>
+        </a>
+        <a class="bottom-nav-item" data-tab="providers">
+          <i data-lucide="building-2" style="width: 20px; height: 20px;"></i>
+          <span data-i18n="nav_providers">Providers</span>
+        </a>
+        <a class="bottom-nav-item" href="/profile/">
+          <i data-lucide="user" style="width: 20px; height: 20px;"></i>
+          <span data-i18n="nav_profile">Profile</span>
+        </a>
+      </div>
+    </nav>
+
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL 1: NEW TRAINEE CREATION FORM -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-new-trainee">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Register New Trainee</h3>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-new-trainee')">&times;</button>
+    </div>
+    <form id="form-new-trainee">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="new-trainee-name">Learner Full Name</label>
+          <input type="text" id="new-trainee-name" class="form-control" placeholder="e.g. Meenakshi Sundaram" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-id">Unified ID</label>
+            <input type="text" id="new-trainee-id" class="form-control" placeholder="e.g. FA-24-0350" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-course">Course</label>
+            <input type="text" id="new-trainee-course" class="form-control" placeholder="e.g. Solar PV Installer" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-provider">Provider</label>
+            <input type="text" id="new-trainee-provider" class="form-control" placeholder="e.g. Saksham" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-stage">Initial Stage</label>
+            <select id="new-trainee-stage" class="form-control" required>
+              <option value="enrolled">Enrolled</option>
+              <option value="trained">Trained</option>
+              <option value="certified">Certified</option>
+              <option value="placed">Placed</option>
+              <option value="retained">Retained</option>
+              <option value="follow_up_due">Follow-up Due</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-district">District</label>
+            <input type="text" id="new-trainee-district" class="form-control" placeholder="e.g. Pune" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-state">State</label>
+            <input type="text" id="new-trainee-state" class="form-control" placeholder="e.g. Maharashtra" required>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-gender">Gender</label>
+            <select id="new-trainee-gender" class="form-control">
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="other">Other</option>
+              <option value="prefer_not_to_say">Prefer Not to Say</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-trainee-age">Age Band</label>
+            <select id="new-trainee-age" class="form-control">
+              <option value="18-24">18–24 years</option>
+              <option value="25-30">25–30 years</option>
+              <option value="31+">31+ years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="FieldAtlasAPI.closeModal('modal-new-trainee')" data-i18n="cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Enroll Trainee</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL 2: EDIT TRAINEE MODAL -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-edit-trainee">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Trainee Details</h3>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-edit-trainee')">&times;</button>
+    </div>
+    <form id="form-edit-trainee">
+      <input type="hidden" id="edit-trainee-id">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="edit-trainee-name">Full Name</label>
+          <input type="text" id="edit-trainee-name" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-trainee-course">Course</label>
+          <input type="text" id="edit-trainee-course" class="form-control" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="edit-trainee-provider">Provider</label>
+            <input type="text" id="edit-trainee-provider" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-trainee-stage">Outcome Stage</label>
+            <select id="edit-trainee-stage" class="form-control" required>
+              <option value="enrolled">Enrolled</option>
+              <option value="trained">Trained</option>
+              <option value="certified">Certified</option>
+              <option value="placed">Placed</option>
+              <option value="retained">Retained</option>
+              <option value="follow_up_due">Follow-up Due</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="edit-trainee-district">District</label>
+            <input type="text" id="edit-trainee-district" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-trainee-state">State</label>
+            <input type="text" id="edit-trainee-state" class="form-control" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="FieldAtlasAPI.closeModal('modal-edit-trainee')" data-i18n="cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" data-i18n="save_changes">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL 3: METHODOLOGY & TRUST FRAMEWORK -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-methodology">
+  <div class="modal-dialog" style="max-width: 650px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Field Atlas Outcome Methodology</h3>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-methodology')">&times;</button>
+    </div>
+    <div class="modal-body" style="line-height: 1.6; font-size: 0.9rem; color: var(--color-deep-indigo);">
+      <h4 style="color: var(--color-teal); margin-bottom: 0.5rem;">Longitudinal Signal Tracking (3, 6, 12 Months)</h4>
+      <p style="margin-bottom: 1rem;">
+        Vocational skilling outcomes are assessed post-certification through proactive check-ins conducted at month 3, 6, and 12. These follow-ups verify employment continuity, real wage growth, and workplace safety.
+      </p>
+
+      <h4 style="color: var(--color-teal); margin-bottom: 0.5rem;">Consent-First Civic Cartography</h4>
+      <p style="margin-bottom: 1rem;">
+        Field Atlas operates on strict participant consent. Learners retain full autonomy over their data and can grant or withdraw consent at any time. When consent is withdrawn, learner contact information is instantly purged from active follow-up queues and masked in administrative exports.
+      </p>
+
+      <h4 style="color: var(--color-teal); margin-bottom: 0.5rem;">Aadhaar-Free Unified Identification</h4>
+      <p>
+        To prevent unnecessary data accumulation and safeguard participant privacy, Field Atlas uses pseudonymous Unified IDs (e.g. FA-24-0182). Raw Aadhaar numbers, biometric data, or sensitive government credentials are never stored.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" onclick="FieldAtlasAPI.closeModal('modal-methodology')">Understood</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/charts.js"></script>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/trainer-dashboard.js"></script>
+{% endblock %}

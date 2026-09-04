@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In — Field Atlas{% endblock %}
+
+{% block content %}
+<div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; background-color: var(--color-parchment);">
+  
+  <!-- Language Selector Top Bar -->
+  <div style="position: absolute; top: 1.25rem; right: 1.5rem;" class="lang-selector-wrap">
+    <select class="lang-select" aria-label="Choose Language">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी (Hindi)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="bn">বাংলা (Bengali)</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+      <option value="te">తెలుగు (Telugu)</option>
+      <option value="kn">ಕನ್ನಡ (Kannada)</option>
+      <option value="gu">ગુજરાતી (Gujarati)</option>
+      <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+      <option value="ml">മലയാളം (Malayalam)</option>
+      <option value="ur">اردو (Urdu)</option>
+    </select>
+    <i data-lucide="globe" class="lang-icon" style="width: 16px; height: 16px;"></i>
+  </div>
+
+  <div style="max-width: 440px; width: 100%;">
+    <!-- Brand Header -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: linear-gradient(135deg, var(--color-teal), #18A89B); border-radius: var(--radius-lg); color: white; margin-bottom: 0.85rem; box-shadow: 0 4px 10px rgba(14, 129, 118, 0.3);">
+        <i data-lucide="compass" style="width: 28px; height: 28px;"></i>
+      </div>
+      <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--color-deep-indigo); letter-spacing: -0.02em;">Field Atlas</h1>
+      <p style="font-size: 0.85rem; color: var(--color-teal); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;" data-i18n="workspace">Good Outcomes / National workspace</p>
+    </div>
+
+    <!-- Login Card -->
+    <div style="background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2.25rem 2rem; box-shadow: var(--shadow-md);">
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--color-deep-indigo); margin-bottom: 0.4rem;">Sign in to your account</h2>
+      <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1.5rem;">Access verified skills outcome intelligence and field operations.</p>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-identifier">Email or Field Atlas ID</label>
+          <input type="text" id="login-identifier" class="form-control" placeholder="e.g. trainer@fieldatlas.in or FA-TR-1001" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label class="form-label" for="login-password" style="margin-bottom: 0;">Password</label>
+            <a href="/forgot-password/" style="font-size: 0.8rem; color: var(--color-teal); text-decoration: none; font-weight: 600;">Forgot password?</a>
+          </div>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--color-text-secondary); cursor: pointer;">
+            <input type="checkbox" id="login-remember" style="accent-color: var(--color-teal); width: 16px; height: 16px;">
+            <span>Remember me for 14 days</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+      </form>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--color-text-secondary);">
+        Don't have an account? <a href="/register/" style="color: var(--color-teal); font-weight: 700; text-decoration: none;">Create account</a>
+      </div>
+    </div>
+
+    <!-- Demo Credentials Helper Card -->
+    <div style="margin-top: 1.25rem; background: rgba(14, 129, 118, 0.08); border: 1px dashed var(--color-teal); border-radius: var(--radius-md); padding: 1rem; font-size: 0.8rem;">
+      <div style="font-weight: 700; color: var(--color-teal); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+        <i data-lucide="key" style="width: 14px; height: 14px;"></i> Quick Demo Credentials (Password: Atlas@2026!)
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.25rem; color: var(--color-deep-indigo);">
+        <div><strong>Trainer:</strong> trainer@fieldatlas.in (ID: FA-TR-1001)</div>
+        <div><strong>Trainee:</strong> trainee@fieldatlas.in (ID: FA-24-0182)</div>
+        <div><strong>Admin:</strong> admin@fieldatlas.in</div>
+      </div>
+    </div>
+
+    <!-- Privacy & Governance Badge -->
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: var(--color-text-muted); display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+      <i data-lucide="shield-check" style="width: 14px; height: 14px; color: var(--color-teal);"></i>
+      <span data-i18n="privacy_note">Consent-aware by design · No raw Aadhaar stored</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}

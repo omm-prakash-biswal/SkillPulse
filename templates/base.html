@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="{{ request.session.django_language|default:'en' }}" dir="{% if request.session.django_language == 'ur' %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>{% block title %}Field Atlas — Skilling Outcomes Platform{% endblock %}</title>
+  
+  <!-- Modern Typography: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Core Application Stylesheets -->
+  <link rel="stylesheet" href="/static/css/field-atlas.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% block content %}{% endblock %}
+
+  <!-- Universal Toast Alerts Container -->
+  <div id="toast-container"></div>
+
+  <!-- Core JavaScript Libraries -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/i18n.js"></script>
+  <script>
+    // Initialize Lucide icons on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

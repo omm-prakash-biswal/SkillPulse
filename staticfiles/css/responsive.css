@@ -1,0 +1,276 @@
+/*
+ * FIELD ATLAS — SKILLING OUTCOMES PLATFORM
+ * Responsive Breakpoints, Mobile Navigation, RTL Support, and Accessibility
+ * Breakpoint tests: 320px, 375px, 390px, 430px, 768px, 1024px, 1440px
+ */
+
+/* Mobile Bottom Navigation (Hidden on desktop) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  z-index: 50;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 600;
+  flex: 1;
+  height: 100%;
+  min-height: 44px;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.bottom-nav-item.active {
+  color: var(--color-teal);
+}
+
+/* Mobile Sidebar Drawer Backdrop */
+.mobile-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(30, 39, 73, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 39;
+}
+
+.mobile-backdrop.active {
+  display: block;
+}
+
+/* Large Screens (1440px+) */
+@media (min-width: 1440px) {
+  .content-body {
+    max-width: 1360px;
+  }
+}
+
+/* Tablets and Desktops under 1024px */
+@media (max-width: 1024px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .followup-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile Viewports (Below 768px: 320px, 375px, 390px, 430px) */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-popover);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-wrapper {
+    margin-left: 0;
+    padding-bottom: calc(var(--bottom-nav-height) + 1.5rem);
+  }
+
+  .mobile-drawer-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+  }
+
+  .content-body {
+    padding: 1rem;
+  }
+
+  .hero-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+  }
+
+  .route-timeline-card {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .route-steps-grid {
+    min-width: 500px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .provider-list-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 220px;
+  }
+
+  .trainee-action-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trainee-stage-rail {
+    overflow-x: auto;
+    min-width: 440px;
+    padding-bottom: 0.5rem;
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .table-search-wrap {
+    max-width: 100%;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-select {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* Extra Small Viewports (320px - 375px) */
+@media (max-width: 375px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  
+  .hero-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+}
+
+/* Right-To-Left (RTL) Support for Urdu */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
+}
+
+[dir="rtl"] .sidebar.open {
+  transform: translateX(0);
+}
+
+[dir="rtl"] .main-wrapper {
+  margin-left: 0;
+  margin-right: var(--sidebar-width);
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .main-wrapper {
+    margin-right: 0;
+  }
+}
+
+[dir="rtl"] .nav-link {
+  text-align: right;
+}
+
+[dir="rtl"] .search-input {
+  padding: 0.55rem 2.4rem 0.55rem 1rem;
+}
+
+[dir="rtl"] .search-icon {
+  left: auto;
+  right: 0.75rem;
+}
+
+[dir="rtl"] .lang-select {
+  padding: 0.45rem 0.85rem 0.45rem 2rem;
+}
+
+[dir="rtl"] .lang-icon {
+  right: auto;
+  left: 0.6rem;
+}
+
+[dir="rtl"] .data-table th,
+[dir="rtl"] .data-table td {
+  text-align: right;
+}
+
+[dir="rtl"] #toast-container {
+  right: auto;
+  left: 1.5rem;
+}
+
+/* Accessibility & Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

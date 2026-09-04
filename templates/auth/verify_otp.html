@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Email OTP — Field Atlas{% endblock %}
+
+{% block content %}
+<div style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; background-color: var(--color-parchment);">
+  <div style="max-width: 440px; width: 100%;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: linear-gradient(135deg, var(--color-teal), #18A89B); border-radius: var(--radius-lg); color: white; margin-bottom: 0.85rem;">
+        <i data-lucide="shield-check" style="width: 28px; height: 28px;"></i>
+      </div>
+      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--color-deep-indigo);">Email OTP Verification</h1>
+      <p style="font-size: 0.85rem; color: var(--color-text-muted);">Enter the 6-digit passcode sent to your email address.</p>
+    </div>
+
+    <div style="background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2.25rem 2rem; box-shadow: var(--shadow-md);">
+      <form id="verify-otp-form">
+        <div class="form-group">
+          <label class="form-label" for="otp-email">Email Address</label>
+          <input type="email" id="otp-email" class="form-control" placeholder="name@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="otp-code">6-Digit Code</label>
+          <input type="text" id="otp-code" class="form-control" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required style="letter-spacing: 0.25em; font-size: 1.25rem; text-align: center; font-family: var(--font-mono);">
+          <small style="display: block; margin-top: 0.35rem; color: var(--color-text-muted); font-size: 0.75rem;">Code expires in 10 minutes (max 3 verification attempts).</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Verify & Continue</button>
+      </form>
+
+      <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; font-size: 0.85rem;">
+        <button type="button" id="btn-send-otp" class="btn btn-outline btn-sm" data-purpose="registration">Resend Code</button>
+        <a href="/login/" style="color: var(--color-teal); font-weight: 700; text-decoration: none; display: flex; align-items: center;">Back to Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}
