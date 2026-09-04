@@ -5,7 +5,7 @@
 {% block content %}
 <div class="app-container" style="background-color: var(--color-parchment); min-height: 100vh;">
   
-  <div class="main-wrapper" style="margin-left: 0; width: 100%; max-width: 900px; margin: 0 auto; padding-bottom: 5rem;">
+  <div class="main-wrapper" style="margin-left: 0; width: 100%; max-width: 920px; margin: 0 auto; padding-bottom: 5rem;">
     
     <!-- Top Header for Learner -->
     <header class="top-header" style="justify-content: space-between;">
@@ -32,6 +32,24 @@
             <option value="ur">اردو (Urdu)</option>
           </select>
           <i data-lucide="globe" class="lang-icon" style="width: 14px; height: 14px;"></i>
+        </div>
+
+        <!-- In-App Notification Bell -->
+        <div class="notification-dropdown-wrap" style="position: relative;">
+          <button id="notification-bell-btn" class="icon-btn" aria-label="View notifications" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative;">
+            <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--color-text);"></i>
+            <span id="notification-badge" class="notif-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: #EF4444; color: white; border-radius: 10px; font-size: 0.65rem; font-weight: 700; padding: 1px 5px; min-width: 16px; text-align: center;">0</span>
+          </button>
+          
+          <div id="notification-popover" class="notification-popover" style="display: none; position: absolute; right: 0; top: 46px; width: 340px; max-width: 90vw; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-bg);">
+              <span style="font-weight: 700; font-size: 0.9rem; color: var(--color-text);">Notifications</span>
+              <button id="notif-mark-all-btn" style="background: none; border: none; font-size: 0.75rem; color: var(--color-teal); font-weight: 600; cursor: pointer;">Mark all read</button>
+            </div>
+            <div id="notification-list" style="max-height: 320px; overflow-y: auto; padding: 8px 0;">
+              <div style="padding: 16px; text-align: center; color: var(--color-text-muted); font-size: 0.85rem;">No notifications yet.</div>
+            </div>
+          </div>
         </div>
 
         <a href="/profile/" class="btn btn-outline btn-sm" title="My Profile" style="min-height: 38px;">
@@ -74,6 +92,79 @@
             <div class="trainee-stage-dot">5</div>
             <span class="trainee-stage-text" data-i18n="route_retained">Retained</span>
           </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION 1: MY LEARNING & CREDENTIALS -->
+      <!-- ============================================== -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--color-deep-indigo); margin: 0;">My Learning & Verifiable Credentials</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">Track your enrolled courses, download tamper-proof PDF certificates, and report your post-skilling employment outcomes.</p>
+          </div>
+        </div>
+
+        <div id="trainee-enrollments-container">
+          <div style="text-align: center; padding: 2rem; color: var(--color-text-muted);">
+            <div>Loading your learning records...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION 2: MY COURSE APPLICATIONS -->
+      <!-- ============================================== -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" id="btn-toggle-applications">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <i data-lucide="file-text" style="width: 18px; height: 18px; color: var(--color-teal);"></i>
+            <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);">My Course Applications</strong>
+            <span class="badge badge-teal" id="applications-count-badge">0</span>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 10px;" id="btn-toggle-apps-label">View Applications</button>
+        </div>
+        <div id="trainee-applications-container" style="display: none; margin-top: 1rem; border-top: 1px solid var(--color-border); padding-top: 1rem;">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SECTION 3: EXPLORE & APPLY FOR COURSES -->
+      <!-- ============================================== -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--color-deep-indigo); margin: 0;">Explore & Apply for Courses</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">Discover published vocational skilling courses, inspect real verified outcomes, and apply directly.</p>
+          </div>
+        </div>
+
+        <!-- Search and Category Filters -->
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 220px; position: relative;">
+            <input type="text" id="trainee-course-search" class="form-control" placeholder="Search by course title, code, or skill..." style="padding-left: 2.25rem;">
+            <i data-lucide="search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--color-text-muted);"></i>
+          </div>
+          <div style="min-width: 180px;">
+            <select id="trainee-category-filter" class="form-control">
+              <option value="">All Categories</option>
+              <option value="IT & Software">IT & Software</option>
+              <option value="Electronics & Hardware">Electronics & Hardware</option>
+              <option value="Healthcare & Caregiving">Healthcare & Caregiving</option>
+              <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
+              <option value="Retail & Hospitality">Retail & Hospitality</option>
+              <option value="Green Energy & Solar">Green Energy & Solar</option>
+              <option value="Construction & Fabrication">Construction & Fabrication</option>
+              <option value="Beauty & Wellness">Beauty & Wellness</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Catalog Grid -->
+        <div id="trainee-courses-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem;">
+          <!-- Dynamically populated via JavaScript -->
         </div>
       </div>
 
@@ -178,6 +269,143 @@
     </div>
   </div>
 </div>
+
+<!-- ============================================== -->
+<!-- MODAL: APPLY FOR COURSE -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-apply-course">
+  <div class="modal-dialog" style="max-width: 520px;">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Apply for Course</h3>
+        <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="apply-modal-course-title"></div>
+      </div>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-apply-course')">&times;</button>
+    </div>
+    <form id="form-apply-course">
+      <input type="hidden" id="apply-course-id">
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="apply-motivation">Statement of Motivation / Prior Background</label>
+          <textarea id="apply-motivation" class="form-control" rows="4" placeholder="Describe your interest in this course, previous skilling or academic background, and your career objectives..." required></textarea>
+        </div>
+        <div style="background: rgba(14, 129, 118, 0.08); border-left: 3px solid var(--color-teal); padding: 10px 14px; border-radius: 4px; font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.4;">
+          <strong>Application Process:</strong> Your profile and motivation statement will be submitted to the course coordinator for review. You will receive an in-app notification once your application is approved.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="FieldAtlasAPI.closeModal('modal-apply-course')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-application">Submit Application</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL: REPORT EMPLOYMENT OUTCOME -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-outcome-survey">
+  <div class="modal-dialog" style="max-width: 560px;">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Report Employment Outcome</h3>
+        <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="outcome-modal-course-title"></div>
+      </div>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-outcome-survey')">&times;</button>
+    </div>
+    <form id="form-outcome-survey">
+      <input type="hidden" id="outcome-enrollment-id">
+      <div class="modal-body" style="max-height: 480px; overflow-y: auto; padding: 1.5rem;">
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="outcome-employment-status">Current Employment Status *</label>
+          <select id="outcome-employment-status" class="form-control" required>
+            <option value="employed">Formally Employed (Salaried / Contract)</option>
+            <option value="self_employed">Self-Employed / Running Enterprise</option>
+            <option value="seeking_employment">Actively Seeking Employment</option>
+            <option value="further_education">Enrolled in Higher Education / Apprenticeship</option>
+            <option value="not_seeking">Not Currently Seeking Work</option>
+          </select>
+        </div>
+
+        <div id="outcome-employed-fields">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="outcome-employer">Employer / Company Name</label>
+              <input type="text" id="outcome-employer" class="form-control" placeholder="e.g. Tata Tech, Local Enterprise">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="outcome-role">Job Title / Designation</label>
+              <input type="text" id="outcome-role" class="form-control" placeholder="e.g. Junior Electrician, Retail Associate">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="outcome-monthly-earning">Monthly Earning (₹ INR)</label>
+              <input type="number" id="outcome-monthly-earning" class="form-control" min="0" step="500" placeholder="e.g. 18500">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="outcome-employment-type">Employment Type</label>
+              <select id="outcome-employment-type" class="form-control">
+                <option value="full_time">Full-Time</option>
+                <option value="part_time">Part-Time</option>
+                <option value="gig_platform">Gig / Platform Worker</option>
+                <option value="freelance">Freelance / Consultant</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="outcome-district">Work District</label>
+              <input type="text" id="outcome-district" class="form-control" placeholder="e.g. Pune">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="outcome-state">Work State</label>
+              <input type="text" id="outcome-state" class="form-control" placeholder="e.g. Maharashtra">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="outcome-notes">Additional Feedback / Career Notes</label>
+          <textarea id="outcome-notes" class="form-control" rows="2" placeholder="Tell us how the course skills contributed to your work, or any support needed..."></textarea>
+        </div>
+
+        <div style="background: rgba(224, 159, 62, 0.12); border-left: 3px solid var(--color-ochre); padding: 10px 14px; border-radius: 4px; font-size: 0.78rem; color: var(--color-text-secondary); line-height: 1.4;">
+          <strong>Privacy Safeguard:</strong> Individual earnings are confidential and protected by k-anonymity privacy safeguards. Course averages are only displayed when 5 or more outcomes have been recorded.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="FieldAtlasAPI.closeModal('modal-outcome-survey')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-outcome">Save Outcome Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- MODAL: COURSE PERFORMANCE EXPLORER -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="modal-course-performance">
+  <div class="modal-dialog" style="max-width: 580px;">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Course Outcomes & Transparency</h3>
+        <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="performance-modal-course-title"></div>
+      </div>
+      <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-course-performance')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 1.5rem;" id="performance-modal-content">
+      <!-- Dynamically populated via JavaScript -->
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="FieldAtlasAPI.closeModal('modal-course-performance')">Close</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}

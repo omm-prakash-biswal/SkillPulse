@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import CustomUser, Trainee, TraineeConsent, Placement, FollowUp, AuditLog, EmailOTP
+from .models import (
+    CustomUser, Trainee, TraineeConsent, Placement, FollowUp, AuditLog, EmailOTP,
+    Course, CourseApplication, Enrollment, Certificate, TraineeOutcome, Notification
+)
 
 # Configures the admin interface for CustomUser with role filtering and security fields
 @admin.register(CustomUser)
@@ -75,4 +78,58 @@ class EmailOTPAdmin(admin.ModelAdmin):
     list_display = ('email', 'purpose', 'created_at', 'expires_at', 'attempts', 'is_verified')
     list_filter = ('purpose', 'is_verified')
     search_fields = ('email',)
+    readonly_fields = ('created_at',)
+
+
+# Configures the admin interface for Course management
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'course_code', 'trainer', 'status', 'capacity', 'start_date', 'end_date', 'certificate_eligible')
+    list_filter = ('status', 'certificate_eligible', 'language', 'category')
+    search_fields = ('title', 'course_code', 'trainer__email', 'provider', 'district')
+    readonly_fields = ('created_at', 'updated_at')
+
+
+# Configures the admin interface for Course Applications
+@admin.register(CourseApplication)
+class CourseApplicationAdmin(admin.ModelAdmin):
+    list_display = ('trainee', 'course', 'status', 'submitted_at', 'reviewed_at', 'reviewed_by')
+    list_filter = ('status', 'submitted_at')
+    search_fields = ('trainee__name', 'course__title', 'course__course_code')
+    readonly_fields = ('submitted_at',)
+
+
+# Configures the admin interface for Course Enrollments
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('trainee', 'course', 'status', 'completion_percent', 'enrolled_at', 'completed_at')
+    list_filter = ('status', 'enrolled_at', 'completed_at')
+    search_fields = ('trainee__name', 'course__title', 'course__course_code')
+    readonly_fields = ('enrolled_at',)
+
+
+# Configures the admin interface for Issued Certificates
+@admin.register(Certificate)
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ('certificate_number', 'enrollment', 'status', 'issued_at', 'issued_by', 'verification_token')
+    list_filter = ('status', 'issued_at')
+    search_fields = ('certificate_number', 'verification_token', 'enrollment__trainee__name')
+    readonly_fields = ('issued_at', 'verification_token')
+
+
+# Configures the admin interface for Trainee Post-Completion Outcomes
+@admin.register(TraineeOutcome)
+class TraineeOutcomeAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'employment_status', 'employer_name', 'job_role', 'monthly_earning', 'verification_status', 'submitted_at')
+    list_filter = ('employment_status', 'verification_status', 'employment_type')
+    search_fields = ('enrollment__trainee__name', 'employer_name', 'job_role')
+    readonly_fields = ('submitted_at', 'updated_at')
+
+
+# Configures the admin interface for System and User Notifications
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('recipient', 'title', 'type', 'is_read', 'created_at')
+    list_filter = ('type', 'is_read', 'created_at')
+    search_fields = ('recipient__email', 'title', 'body')
     readonly_fields = ('created_at',)

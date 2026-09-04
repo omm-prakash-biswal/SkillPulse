@@ -1,46 +1,65 @@
-<<<<<<< HEAD
 # FIELD ATLAS — SKILLING OUTCOMES PLATFORM
 
-A production-grade, responsive skills and employment outcomes platform for India. Field Atlas connects training completion with longitudinal post-placement signal, providing tailored operational interfaces for **Trainers** and **Trainees**, 11-language localization (including dynamic RTL for Urdu), email OTP authentication, and real SQL persistence via Django 5+ and Django REST Framework.
+A production-grade, responsive skills and employment outcomes platform for India. Field Atlas connects vocational skilling courses and completion with longitudinal post-placement outcomes, providing tailored operational interfaces for **Trainers** and **Trainees**, 11-language localization (including dynamic RTL for Urdu), cryptographic email OTP authentication, ReportLab verifiable PDF certificates, k-anonymity privacy safeguards, and real SQL persistence via Django 5+ and Django REST Framework.
 
 ---
 
 ## 1. Technology Stack
 
 - **Frontend**: Pure HTML5, Vanilla CSS3, and Vanilla JavaScript (No React, TypeScript, Node.js, Vite, Express, or frontend frameworks).
-- **Backend**: Python 3.12+ (tested on Python 3.14), Django 5+, Django REST Framework (DRF).
+- **Backend**: Python 3.12+ (verified on Python 3.14), Django 5+, Django REST Framework (DRF).
 - **Database**: MySQL via PyMySQL driver with SQLite local development fallback.
 - **Visualizations**: Chart.js for wage progression, cohort conversion funnel, provider benchmarking, and diagnostics.
-- **Design Tokens & Icons**: Lucide Icons CDN, civic cartography palette (Deep Indigo, Field Teal, Indigo Blue, Ochre, Coral, Parchment).
-- **Security**: 6-digit email OTP (10-min expiration, 3-attempt limit, 60s cooldown rate limiting), Django session/CSRF authentication, role-based authorization, and audit logging.
+- **Certificates**: ReportLab 4.0+ for high-fidelity landscape PDF generation with cryptographic verification tokens and direct download links.
+- **Design Tokens & Icons**: Lucide Icons CDN, civic cartography palette (Deep Indigo `#1E2749`, Field Teal `#0E8176`, Indigo Blue `#49618B`, Ochre `#D69541`, Coral `#D56F58`, Parchment `#F7F5F0`).
+- **Security**: Cryptographically secure 6-digit email OTP via `secrets` module with HMAC-SHA256 digests, 10-minute expiration, single-use invalidation, anti-enumeration, 5-attempt temporary account lockout, password complexity rules, atomic transactions, and Pillow photo sanitization.
 
 ---
 
-## 2. Key Features
+## 2. Key Architecture & Hardening Features
 
-### Role-Based Dashboards
-1. **Trainer Dashboard (`/trainer/`)**:
-   - **Overview**: Hero section, 5-step outcome route timeline (*Enrolled → Trained → Certified → Placed → Retained*), 4 metric KPI cards, Chart.js wage progression curve with baseline floor, cohort conversion funnel, provider pulse leaderboard, and non-placement donut chart.
-   - **Follow-ups**: Priority assistance queue, WhatsApp and SMS message preview switcher with simulated typing state, response action tags, and live database persistence with consent verification.
-   - **Trainees Directory**: Searchable, filterable table by provider, district, stage, and consent status. Full modal for enrolling new trainees and recording initial consent.
-   - **Providers Benchmark**: Grouped bar chart comparing placement and retention, district insights (*"West Maharashtra is retaining talent longer"*), and employer validation stats.
-   - **Reports**: Downloadable CSV exports for impact briefs, provider comparisons, and diagnostics, with automatic audit logging.
+### Course Management & Trainee Lifecycle
+1. **Course Creation & Publishing**: Trainers create courses with categories, student capacities, and duration. Publishing opens the course to the public catalog.
+2. **Trainee Applications**: Trainees browse published offerings and submit applications with qualitative statements of motivation.
+3. **Application Review & Enrollment**: Trainers review applicant rosters to approve or reject with decision notes; approvals automatically generate active student enrollments and notify learners.
+4. **Progress & Roster Monitoring**: Trainers track student completion percentages, record completion notes, and monitor class capacity.
+5. **Verifiable PDF Certificates**: Completed students receive tamper-evident landscape PDF certificates generated via ReportLab with unique verification UUIDs.
+6. **Public Verification Portal**: Employers and verifiers can validate credentials at `/certificate/verify/<token>/` without requiring authentication.
+7. **Employment Outcome Surveys**: Graduated trainees report employment status, employer name, job title, and monthly earnings; trainers verify reported data.
+8. **k-Anonymity Privacy Safeguards**: Course wage metrics are concealed when fewer than 5 outcomes have been submitted (`< 5 responses`), displaying `"Wage data hidden to protect learner privacy (< 5 responses)"`.
 
-2. **Trainee Portal (`/trainee/`)**:
-   - Mobile-first, streamlined learner dashboard.
-   - Stage progress timeline rail (*Enrolled → Trained → Certified → Placed → Retained*).
-   - Profile completion progress bar.
-   - Current placement and verified wage record.
-   - Upcoming check-in card with quick action buttons: *"I am working"*, *"I run my own business"*, *"I need support"*.
-   - Consent management panel: Learners can grant or withdraw consent anytime.
-   - Progress report download: Generates printable learner summary certificate.
+### Trainer Data Isolation
+- Strict row-level and object-level scoping: Trainers can only query, edit, reschedule, or outreach trainees assigned to them (`assigned_trainer`), and only manage courses they instruct.
+- Accessing or modifying a participant or course outside the trainer's authorized scope immediately triggers an HTTP 403 Forbidden response.
+- Admins retain unrestricted global visibility across all training partners and district hubs.
+- Trainees are restricted strictly to their personal self-service learning portal, applications, and check-in timeline.
 
-3. **Editable Profile Page (`/profile/`)**:
-   - Edit full name, phone number, preferred language, district, state, address, and professional bio.
-   - Profile photo upload with instant preview.
-   - Secure password change flow.
+### In-App Notification System
+- Real-time in-app alerts delivered to both trainers and trainees.
+- Header notification bell with unread badge counter and popover drawer.
+- Event categories: Course Applications, Approvals, Certificate Issuance, Outcome Survey Reminders, and General Alerts.
 
-### 11-Language Localization
+### Cryptographic OTP & Account Lockout
+- **HMAC-SHA256 Storage**: Raw 6-digit OTP codes are never persisted in plain text. Stored records contain only HMAC digests keyed with the application secret.
+- **Single-Use & Invalidation**: Used or expired codes are permanently invalidated.
+- **Rate-Limiting**: 60-second cooldown per target email/IP address.
+- **Mandatory Registration OTP**: Self-registration requires verified email ownership.
+- **Temporary Account Lockout**: 5 consecutive failed login attempts automatically locks the account for 15 minutes.
+
+### Longitudinal Follow-Up & Rescheduling Workflow
+- Multi-milestone outreach tracking at 3, 6, and 12-month post-training intervals.
+- Rescheduling status (`rescheduled`), explicit `next_contact_date`, and qualitative `trainer_notes`.
+- Computed `is_overdue` and `is_due_today` serializer flags rendered with dynamic badge indicators.
+- Strict consent gate: If participant consent is withdrawn, outreach dispatch is automatically blocked.
+
+### Audit Logging & Compliant CSV Reports
+- **UTF-8 BOM Prepending**: CSV exports (`\ufeff`) ensure flawless rendering of Devanagari, Tamil, Bengali, and all Indian scripts in Microsoft Excel.
+- **Consent Masking**: Participants who have withdrawn consent have their names and contact details masked in compliance with data minimization standards.
+- **Download Audit Trail**: Report downloads generate immutable records in `AuditLog`, inspectable via `/api/reports/history/`.
+
+---
+
+## 3. 11-Language Localization
 Native client and backend translations supporting:
 1. English (`en`)
 2. Hindi (`hi`)
@@ -56,42 +75,37 @@ Native client and backend translations supporting:
 
 ---
 
-## 3. Local Setup & Execution Guide
+## 4. Local Setup & Execution Guide
 
 ### Prerequisites
 - Python 3.12+ (or 3.14)
 - Git / PowerShell / Terminal
 
-### Step 1: Clone or Navigate to Directory
+### Step 1: Install Python Dependencies
 ```bash
 cd d:\vs
-```
-
-### Step 2: Install Python Dependencies
-```bash
 pip install -r requirements.txt
 ```
 
-### Step 3: Configure Environment Variables
+### Step 2: Configure Environment Variables
 Copy `.env.example` to `.env`:
 ```bash
 copy .env.example .env
 ```
-Default `.env` settings are already configured to use SQLite local fallback and console email backend (OTPs appear directly in the terminal).
+Default `.env` settings are already configured for SQLite local fallback and console email backend (OTPs display directly in the terminal).
 
-### Step 4: Run Migrations
+### Step 3: Run Database Migrations
 ```bash
-python manage.py makemigrations outcomes
 python manage.py migrate
 ```
 
-### Step 5: Seed Demo Records (Idempotent)
-Populates initial demo accounts, trainees (Asha Devi, Ravi Kumar, Meena Kumari, Javed Ansari, Sonal Patil), placements, consents, and follow-ups:
+### Step 4: Seed Demo Records (Idempotent)
+Populates initial demo trainers, trainees, placements, consents, courses, enrollments, certificates, outcomes, and notifications:
 ```bash
 python manage.py seed_demo_data
 ```
 
-### Step 6: Start the Development Server
+### Step 5: Start the Development Server
 ```bash
 python manage.py runserver 127.0.0.1:8000
 ```
@@ -99,7 +113,7 @@ Open your browser at [http://127.0.0.1:8000/login/](http://127.0.0.1:8000/login/
 
 ---
 
-## 4. Default Demo Credentials
+## 5. Default Demo Credentials
 
 All demo accounts share the password: `Atlas@2026!`
 
@@ -111,118 +125,129 @@ All demo accounts share the password: `Atlas@2026!`
 
 ---
 
-## 5. MySQL Configuration Instructions
+## 6. Docker Deployment Guide
 
-To run on a production or local MySQL server:
+To launch the full production-ready stack with Django and MySQL:
 
-1. Create a MySQL database and user:
-```sql
-CREATE DATABASE field_atlas CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'field_atlas_user'@'localhost' IDENTIFIED BY 'your_password';
-GRANT ALL PRIVILEGES ON field_atlas.* TO 'field_atlas_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-2. Update `.env`:
-```env
-USE_MYSQL=True
-DB_NAME=field_atlas
-DB_USER=field_atlas_user
-DB_PASSWORD=your_password
-DB_HOST=127.0.0.1
-DB_PORT=3306
-```
-
-3. Run migrations on MySQL:
 ```bash
-python manage.py migrate
-python manage.py seed_demo_data
+docker-compose up -d --build
 ```
-
-*Note: PyMySQL is natively integrated in `backend/__init__.py`, so no binary C-compiler (`mysqlclient`) is required.*
+This automatically initializes:
+- A MySQL 8.0 container on port 3306 with health check verification.
+- A Django web application container running on port 8000 with PyMySQL.
 
 ---
 
-## 6. Complete REST API Contract
+## 7. Database Backup Command
 
-All REST JSON endpoints are prefixed with `/api/`:
+To create an instant snapshot of the application state:
+```bash
+python manage.py backup_database
+```
+Backups are saved to `backups/field_atlas_backup_<timestamp>.json`.
 
-### Authentication
-- `POST /api/auth/register/` — Register trainer or trainee with optional OTP.
-- `POST /api/auth/login/` — Authenticate via email or Field Atlas ID + password.
+---
+
+## 8. Complete REST API Contract
+
+All REST JSON endpoints are prefixed with `/api/` (except `/health/` and public verification pages):
+
+### System & Health
+- `GET /health/` — Platform and database connectivity health probe.
+- `GET /certificate/verify/<token>/` — Public credential verification HTML page.
+
+### Authentication & Profiles
+- `POST /api/auth/register/` — Register with mandatory OTP validation.
+- `POST /api/auth/login/` — Authenticate with 5-attempt temporary lockout.
 - `POST /api/auth/logout/` — End session.
-- `POST /api/auth/send-otp/` — Send 6-digit email OTP (rate-limited to 60s).
-- `POST /api/auth/verify-otp/` — Verify OTP (max 3 attempts).
+- `POST /api/auth/send-otp/` — Request 6-digit email OTP (rate-limited).
+- `POST /api/auth/verify-otp/` — Verify OTP (HMAC constant-time check).
 - `POST /api/auth/password-reset/` — Reset password with OTP.
 - `POST /api/auth/change-password/` — Change password for logged-in user.
 - `GET /api/auth/me/` — Return current session user details and role.
+- `GET /api/profile/` & `PATCH /api/profile/` — Profile retrieval and update.
+- `POST /api/profile/photo/` — Profile photo upload (Pillow validation, max 2MB).
+- `GET /api/i18n/languages/` — List all 11 supported languages.
+- `POST /api/i18n/set-language/` — Set user language preference.
 
-### Profiles & Localization
-- `GET /api/profile/` — Fetch current user profile.
-- `PATCH /api/profile/` — Update user profile details.
-- `POST /api/profile/photo/` — Upload profile photo.
-- `GET /api/i18n/languages/` — List all 11 supported national languages.
-- `POST /api/i18n/set-language/` — Set preferred language.
+### Course Management (Trainer Scoped)
+- `GET /api/courses/` & `POST /api/courses/` — List trainer courses or create a new course.
+- `GET /api/courses/<id>/` & `PATCH /api/courses/<id>/` — Retrieve or update course details.
+- `POST /api/courses/<id>/publish/` — Publish course to make it visible to trainees.
+- `POST /api/courses/<id>/close/` — Close course applications.
+- `GET /api/courses/<id>/applications/` — View applications submitted for a course.
+- `POST /api/courses/applications/<id>/review/` — Approve or reject an application.
+- `GET /api/courses/<id>/enrollments/` — Roster of enrolled learners with progress.
+- `PATCH /api/courses/enrollments/<id>/` — Update learner progress percentage and completion notes.
+- `POST /api/courses/enrollments/<id>/certificate/` — Issue verifiable ReportLab PDF certificate.
+- `POST /api/courses/enrollments/<id>/remind/` — Dispatch outcome survey reminder.
+- `POST /api/courses/outcomes/<id>/verify/` — Mark reported employment outcome as verified.
+- `GET /api/courses/<id>/analytics/` — Comprehensive outcomes analytics breakdown.
+- `GET /api/courses/<id>/performance/` — Transparent course performance metrics with k-anonymity privacy safeguards.
 
-### Trainer Operations
-- `GET /api/trainer/dashboard/` — Aggregated KPI metrics, funnel, wage curve, and provider pulse.
-- `GET /api/outcomes/trainees/` — Query trainees with search and filter parameters.
-- `POST /api/outcomes/trainees/` — Create a new trainee record.
-- `PATCH /api/outcomes/trainees/<id>/` — Update trainee record.
-- `POST /api/outcomes/trainees/seed-demo/` — Seed demo trainees idempotently.
-- `GET /api/outcomes/follow-ups/` — List priority follow-up queue.
-- `POST /api/outcomes/follow-ups/` — Create a follow-up item.
-- `POST /api/outcomes/follow-ups/seed-demo/` — Seed demo follow-up queue.
-- `POST /api/outcomes/follow-ups/<id>/send/` — Dispatch outreach attempt (enforces active consent, increments attempts, updates DB).
-- `GET /api/outcomes/placements/?trainee_id=<id>` — Placements list.
-- `POST /api/outcomes/placements/` — Create placement.
+### Trainee Self-Service & Learning
+- `GET /api/trainee/me/dashboard/` — Personal timeline, placement, and check-in prompt.
+- `GET /api/trainee/courses/` — Browse published courses with search and category filtering.
+- `POST /api/trainee/courses/<id>/apply/` — Apply for a course with motivation statement.
+- `GET /api/trainee/me/applications/` — View submitted course applications.
+- `GET /api/trainee/me/enrollments/` — View enrolled courses, progress, and certificate download links.
+- `GET /api/trainee/me/enrollments/<id>/outcome/` — Retrieve recorded employment outcome.
+- `POST /api/trainee/me/enrollments/<id>/outcome/` — Submit or update employment outcome survey.
+- `POST /api/trainee/me/follow-ups/<id>/respond/` — Submit check-in response.
+- `GET /api/trainee/me/progress-report/` — Structured learner progress summary document.
+- `POST /api/trainee/me/consent/` — Manage personal consent status.
+
+### Certificates & Notifications
+- `GET /api/certificates/<id>/download/` — Download certificate PDF file.
+- `GET /api/certificates/verify/<token>/` — Public API to verify certificate authenticity.
+- `GET /api/notifications/` — List user notifications with unread count.
+- `POST /api/notifications/<id>/read/` — Mark specific notification as read.
+- `POST /api/notifications/read-all/` — Mark all notifications as read.
+
+### Longitudinal Follow-ups & Reports
+- `GET /api/trainer/dashboard/` — Dynamic SQL-driven KPI metrics and charts.
+- `GET /api/outcomes/trainees/` — Query scoped trainees with pagination and filters.
+- `POST /api/outcomes/trainees/` — Create trainee with atomic intake consent.
+- `GET /api/outcomes/follow-ups/` — List scoped follow-up queue with overdue flags.
+- `PATCH /api/outcomes/follow-ups/<id>/` — Reschedule follow-up and add trainer notes.
+- `POST /api/outcomes/follow-ups/<id>/send/` — Dispatch outreach attempt.
+- `GET /api/outcomes/placements/` — List scoped placements.
 - `POST /api/outcomes/consents/` — Grant or withdraw consent.
-- `GET /api/reports/provider-export/` — Download provider performance CSV.
-- `GET /api/reports/impact-export/` — Download consent-filtered impact brief CSV.
-
-### Trainee Self-Service
-- `GET /api/trainee/me/dashboard/` — Personal timeline, placement status, and upcoming check-in.
-- `GET /api/trainee/me/profile/` & `PATCH /api/trainee/me/profile/` — Trainee profile.
-- `GET /api/trainee/me/follow-ups/` — Trainee follow-up history.
-- `POST /api/trainee/me/follow-ups/<id>/respond/` — Submit check-in update (*"working"*, *"own_work"*, *"need_help"*).
-- `GET /api/trainee/me/progress-report/` — Structured learner progress summary.
-- `GET /api/trainee/me/consent/` & `POST /api/trainee/me/consent/` — Manage personal consent status.
+- `GET /api/reports/provider-export/` — Download provider performance CSV (UTF-8 BOM).
+- `GET /api/reports/impact-export/` — Download consent-masked impact CSV (UTF-8 BOM).
+- `GET /api/reports/history/` — Audit history of report exports.
 
 ---
 
-## 7. Testing & Verification
+## 9. Automated Test Suite
 
-Run the automated test suite:
+Run the full automated test suite:
 ```bash
 python manage.py test outcomes
 ```
 
-### Test Results
+### Verification Output
 ```
-Ran 11 tests in 8.903s
+Ran 28 tests in 31.670s
 
 OK
 ```
 Covering:
-- User registration and role redirects (blocking unauthorized admin self-registration)
-- 6-digit email OTP generation, expiry, and attempt limits
-- Profile editing and field validation
-- Trainee vs Trainer role permission isolation (HTTP 403 enforcement)
-- Trainee enrollment with automatic consent recording
-- Idempotent demo data seeding
-- Consent grant and withdrawal
-- Follow-up outreach dispatch with consent blocking
-- Trainee check-in response behavior and stage advancement
-- Placement filtering by trainee ID
-
----
-
-## 8. Intentional Functional Limitations
-
-1. **Email Service**: Defaults to Django Console Email Backend (`EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`) for local development so 6-digit OTPs display cleanly in the terminal. For production, configure standard SMTP credentials in `.env` (`EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`).
-2. **SMS & WhatsApp Gateway**: Outreach actions are explicitly tagged as simulated/demo. In accordance with the prompt, no real SMS or WhatsApp messages are sent without external gateway credentials (e.g. Twilio / Gupshup).
-3. **Aadhaar Privacy**: In strict compliance with civic cartography principles, raw Aadhaar numbers are never collected or stored; only pseudonymous Unified IDs are utilized.
-=======
-# SkillPulse
-Employment Outcome Intelligence Platform  From Training Completion to Real-World Employment Impact.
->>>>>>> 86e21b3c7047bbf386a5f9c9b225b7b9241fe34c
+- Course creation, update, publication, and closure lifecycle
+- Trainee course application submission, trainer review, approval, and enrollment creation
+- Strict object-level trainer isolation (HTTP 403 on foreign course review, progress update, and certificate issuance)
+- Trainee progress tracking, ReportLab landscape PDF certificate generation, and secure download
+- Public certificate verification via both API and dedicated HTML verification landing page
+- Trainee post-skilling outcome submission and trainer verification
+- k-anonymity privacy safeguards hiding average wage when responses are under 5
+- In-app notification delivery, unread counter, and mark-as-read endpoints
+- Trainer data isolation (HTTP 403 on foreign trainee view, update, outreach, reschedule, and exports)
+- Unrestricted Admin access & Trainee self-service isolation
+- Cryptographic HMAC OTP generation, single-use invalidation, and expiration
+- 5-attempt account lockout rate-limiting and anti-enumeration
+- Weak password rejection via Django password validators
+- Pillow profile photo upload sanitization (valid image passes, fake/oversized files rejected, old file cleanup)
+- Follow-up rescheduling workflow with `next_contact_date`, `trainer_notes`, and overdue/due-today flags
+- Provider name canonicalization across naming variations
+- Scoped CSV exports with UTF-8 BOM encoding and consent masking
+- Platform health check probe (`/health/`) returning HTTP 200

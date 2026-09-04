@@ -57,3 +57,9 @@ def trainee_dashboard_page(request):
 @login_required(login_url='login_page')
 def profile_page(request):
     return render(request, 'profile.html', {'user': request.user})
+
+
+# Renders the public certificate verification page for checking credential authenticity
+def certificate_verify_page(request, verification_token):
+    return render(request, 'certificate_verify.html', {'verification_token': verification_token})
+

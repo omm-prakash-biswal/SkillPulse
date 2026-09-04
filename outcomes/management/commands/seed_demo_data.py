@@ -11,5 +11,8 @@ class Command(BaseCommand):
         results = seed_default_demo_data()
         self.stdout.write(self.style.SUCCESS(
             f"Successfully seeded: {results['users']} users, {results['trainees']} trainees, "
-            f"{results['placements']} placements, {results['follow_ups']} follow-ups, {results['consents']} consents."
+            f"{results['placements']} placements, {results['follow_ups']} follow-ups, {results['consents']} consents, "
+            f"{results.get('courses', 0)} courses, {results.get('enrollments', 0)} enrollments, "
+            f"{results.get('certificates', 0)} certificates, {results.get('outcomes', 0)} outcomes, "
+            f"{results.get('notifications', 0)} notifications."
         ))

@@ -112,6 +112,25 @@
         </form>
       </div>
 
+      <!-- Programmes & Courses Record Card -->
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-deep-indigo); margin: 0;">
+              {% if user.role == 'trainee' %}Enrolled Courses & Credentials{% else %}Courses Offered & Mentored{% endif %}
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0.25rem 0 0 0;">
+              {% if user.role == 'trainee' %}Official learning track, completion progress, and verifiable certificates.{% else %}Active and archived vocational skilling courses under your instruction.{% endif %}
+            </p>
+          </div>
+        </div>
+        <div id="profile-courses-container">
+          <div style="text-align: center; padding: 1.5rem; color: var(--color-text-muted); font-size: 0.85rem;">
+            Loading programme records...
+          </div>
+        </div>
+      </div>
+
       <!-- Password Change Card -->
       <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
         <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-deep-indigo); margin-bottom: 1.25rem;">Security & Password</h3>

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: field_atlas_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: field_atlas
+      MYSQL_USER: field_atlas_user
+      MYSQL_PASSWORD: secure_atlas_password_2026
+      MYSQL_ROOT_PASSWORD: secure_root_password_2026
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: field_atlas_app
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_demo_data &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 backend.wsgi:application"
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=production-field-atlas-secret-key-replace-with-env-override
+      - USE_MYSQL=True
+      - DB_NAME=field_atlas
+      - DB_USER=field_atlas_user
+      - DB_PASSWORD=secure_atlas_password_2026
+      - DB_HOST=db
+      - DB_PORT=3306
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - media_volume:/app/media
+
+volumes:
+  mysql_data:
+  media_volume:

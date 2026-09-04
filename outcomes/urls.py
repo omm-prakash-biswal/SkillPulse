@@ -2,6 +2,9 @@ from django.urls import path
 from . import views_pages, views_api
 
 urlpatterns = [
+    # Health Check Endpoint
+    path('health/', views_api.HealthCheckAPIView.as_view(), name='health_check'),
+
     # Page Routes
     path('', views_pages.index_view, name='index_view'),
     path('login/', views_pages.login_page, name='login_page'),
@@ -11,6 +14,7 @@ urlpatterns = [
     path('trainer/', views_pages.trainer_dashboard_page, name='trainer_dashboard'),
     path('trainee/', views_pages.trainee_dashboard_page, name='trainee_dashboard'),
     path('profile/', views_pages.profile_page, name='profile_page'),
+    path('certificate/verify/<str:verification_token>/', views_pages.certificate_verify_page, name='certificate_verify_page'),
 
     # REST APIs: Authentication
     path('api/auth/register/', views_api.RegisterAPIView.as_view(), name='api_register'),
@@ -34,17 +38,46 @@ urlpatterns = [
     path('api/outcomes/trainees/<int:pk>/', views_api.TraineeDetailAPIView.as_view(), name='api_trainee_detail'),
     path('api/outcomes/trainees/seed-demo/', views_api.SeedDemoTraineesAPIView.as_view(), name='api_seed_trainees'),
     path('api/outcomes/follow-ups/', views_api.FollowUpListCreateAPIView.as_view(), name='api_follow_ups_list_create'),
+    path('api/outcomes/follow-ups/<int:pk>/', views_api.FollowUpDetailAPIView.as_view(), name='api_follow_up_detail'),
     path('api/outcomes/follow-ups/seed-demo/', views_api.SeedDemoFollowUpsAPIView.as_view(), name='api_seed_follow_ups'),
     path('api/outcomes/follow-ups/<int:pk>/send/', views_api.SendFollowUpAPIView.as_view(), name='api_send_follow_up'),
     path('api/outcomes/placements/', views_api.PlacementListCreateAPIView.as_view(), name='api_placements_list_create'),
     path('api/outcomes/consents/', views_api.RecordConsentAPIView.as_view(), name='api_record_consent'),
     path('api/reports/provider-export/', views_api.ProviderReportExportAPIView.as_view(), name='api_provider_export'),
     path('api/reports/impact-export/', views_api.ImpactReportExportAPIView.as_view(), name='api_impact_export'),
+    path('api/reports/history/', views_api.ReportDownloadHistoryAPIView.as_view(), name='api_report_history'),
 
-    # REST APIs: Trainee Self-Service
+    # REST APIs: Course Management (Trainer)
+    path('api/courses/', views_api.CourseListCreateAPIView.as_view(), name='api_courses_list_create'),
+    path('api/courses/<int:pk>/', views_api.CourseDetailAPIView.as_view(), name='api_course_detail'),
+    path('api/courses/<int:pk>/publish/', views_api.CoursePublishAPIView.as_view(), name='api_course_publish'),
+    path('api/courses/<int:pk>/close/', views_api.CourseCloseAPIView.as_view(), name='api_course_close'),
+    path('api/courses/<int:pk>/applications/', views_api.CourseApplicationsListAPIView.as_view(), name='api_course_applications_list'),
+    path('api/courses/applications/<int:pk>/review/', views_api.CourseApplicationReviewAPIView.as_view(), name='api_course_application_review'),
+    path('api/courses/<int:pk>/enrollments/', views_api.CourseEnrollmentsListAPIView.as_view(), name='api_course_enrollments_list'),
+    path('api/courses/enrollments/<int:pk>/', views_api.EnrollmentDetailAPIView.as_view(), name='api_enrollment_detail'),
+    path('api/courses/enrollments/<int:pk>/certificate/', views_api.CourseIssueCertificateAPIView.as_view(), name='api_course_issue_certificate'),
+    path('api/courses/enrollments/<int:pk>/remind/', views_api.CourseSendOutcomeReminderAPIView.as_view(), name='api_course_send_outcome_reminder'),
+    path('api/courses/outcomes/<int:pk>/verify/', views_api.CourseVerifyOutcomeAPIView.as_view(), name='api_course_verify_outcome'),
+    path('api/courses/<int:pk>/analytics/', views_api.CourseAnalyticsAPIView.as_view(), name='api_course_analytics'),
+    path('api/courses/<int:pk>/performance/', views_api.CoursePerformanceExplorerAPIView.as_view(), name='api_course_performance_explorer'),
+
+    # REST APIs: Trainee Self-Service & Course Learning
     path('api/trainee/me/dashboard/', views_api.TraineeSelfDashboardAPIView.as_view(), name='api_trainee_self_dashboard'),
     path('api/trainee/me/profile/', views_api.ProfileAPIView.as_view(), name='api_trainee_self_profile'),
     path('api/trainee/me/follow-ups/<int:pk>/respond/', views_api.TraineeRespondFollowUpAPIView.as_view(), name='api_trainee_respond_follow_up'),
     path('api/trainee/me/progress-report/', views_api.TraineeProgressReportAPIView.as_view(), name='api_trainee_progress_report'),
     path('api/trainee/me/consent/', views_api.RecordConsentAPIView.as_view(), name='api_trainee_consent'),
+    path('api/trainee/courses/', views_api.TraineeBrowseCoursesAPIView.as_view(), name='api_trainee_browse_courses'),
+    path('api/trainee/courses/<int:pk>/apply/', views_api.TraineeApplyCourseAPIView.as_view(), name='api_trainee_apply_course'),
+    path('api/trainee/me/applications/', views_api.TraineeMyApplicationsAPIView.as_view(), name='api_trainee_my_applications'),
+    path('api/trainee/me/enrollments/', views_api.TraineeMyEnrollmentsAPIView.as_view(), name='api_trainee_my_enrollments'),
+    path('api/trainee/me/enrollments/<int:pk>/outcome/', views_api.TraineeOutcomeAPIView.as_view(), name='api_trainee_enrollment_outcome'),
+
+    # REST APIs: Certificates & Notifications
+    path('api/certificates/<int:pk>/download/', views_api.CertificateDownloadAPIView.as_view(), name='api_certificate_download'),
+    path('api/certificates/verify/<str:token>/', views_api.PublicCertificateVerifyAPIView.as_view(), name='api_public_certificate_verify'),
+    path('api/notifications/', views_api.NotificationListAPIView.as_view(), name='api_notifications_list'),
+    path('api/notifications/<int:pk>/read/', views_api.NotificationMarkReadAPIView.as_view(), name='api_notification_mark_read'),
+    path('api/notifications/read-all/', views_api.NotificationMarkReadAPIView.as_view(), name='api_notifications_mark_all_read'),
 ]

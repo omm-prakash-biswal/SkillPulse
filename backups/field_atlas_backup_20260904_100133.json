@@ -1,0 +1,748 @@
+[
+{
+  "model": "outcomes.customuser",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$iFPUdKVNZHzy2ut5qmp6is$mVLZoNqdLE9qGri8U/p425ridWkEQM6mP57hHtTLME8=",
+    "last_login": "2026-09-04T15:32:42.668Z",
+    "is_superuser": true,
+    "full_name": "ommmmm",
+    "email": "omm@gmail.com",
+    "field_atlas_id": "FA-24-4269",
+    "role": "admin",
+    "phone_number": "",
+    "preferred_language": "en",
+    "profile_photo": "",
+    "provider": "",
+    "district": "",
+    "state": "",
+    "address": "",
+    "bio": "",
+    "is_active": true,
+    "is_staff": true,
+    "failed_login_attempts": 0,
+    "locked_until": null,
+    "created_at": "2026-09-04T15:31:32.647Z",
+    "updated_at": "2026-09-04T15:31:32.647Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "outcomes.customuser",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$f5xdOh0uZjQ6uwIwecSPIR$uW+lVTGHdkzehs6mSsYUlm/2H/not5jaFzKKDgG9Keo=",
+    "last_login": "2026-09-04T16:33:00.570Z",
+    "is_superuser": true,
+    "full_name": "omm",
+    "email": "babatiluai@gmail.com",
+    "field_atlas_id": "FA-24-7044",
+    "role": "admin",
+    "phone_number": "",
+    "preferred_language": "en",
+    "profile_photo": "",
+    "provider": "",
+    "district": "",
+    "state": "",
+    "address": "",
+    "bio": "",
+    "is_active": true,
+    "is_staff": true,
+    "failed_login_attempts": 0,
+    "locked_until": null,
+    "created_at": "2026-09-04T15:22:10.759Z",
+    "updated_at": "2026-09-04T15:22:10.759Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "outcomes.customuser",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$5BQNVCKvyUT9TDdiK0qkjA$4CIpYLZMsLWkidm8F/Y8WNe4/sz8qZKmfQ9Nhur8WT8=",
+    "last_login": "2026-09-04T16:33:17.692Z",
+    "is_superuser": false,
+    "full_name": "Asha Devi",
+    "email": "trainee@fieldatlas.in",
+    "field_atlas_id": "FA-24-0182",
+    "role": "trainee",
+    "phone_number": "+91 94220 88712",
+    "preferred_language": "en",
+    "profile_photo": "",
+    "provider": "Saksham",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "address": "",
+    "bio": "",
+    "is_active": true,
+    "is_staff": false,
+    "failed_login_attempts": 0,
+    "locked_until": null,
+    "created_at": "2026-09-04T15:06:26.171Z",
+    "updated_at": "2026-09-04T15:38:09.789Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "outcomes.customuser",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$ooi1BQZTrl9snMxwIt6U11$zCvH1plXypztPAW+zOG0cQPhDmvuvVOzWT5MOcx9nR0=",
+    "last_login": null,
+    "is_superuser": false,
+    "full_name": "Vikram Shinde",
+    "email": "trainer@fieldatlas.in",
+    "field_atlas_id": "FA-TR-1001",
+    "role": "trainer",
+    "phone_number": "+91 98230 11223",
+    "preferred_language": "en",
+    "profile_photo": "",
+    "provider": "Saksham",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "address": "",
+    "bio": "Lead vocational mentor with 8+ years experience in green energy and digital skills.",
+    "is_active": true,
+    "is_staff": false,
+    "failed_login_attempts": 0,
+    "locked_until": null,
+    "created_at": "2026-09-04T15:06:25.772Z",
+    "updated_at": "2026-09-04T15:06:26.165Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "outcomes.customuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$D6ZYySbHsWgR7wOreWoP5t$spk8rWRV0VsqLSfCBT5Htnd9WlryaZNOX9W6vIOue2g=",
+    "last_login": null,
+    "is_superuser": true,
+    "full_name": "Field Atlas Administrator",
+    "email": "admin@fieldatlas.in",
+    "field_atlas_id": "FA-AD-0001",
+    "role": "admin",
+    "phone_number": "",
+    "preferred_language": "en",
+    "profile_photo": "",
+    "provider": "National Skills Operations",
+    "district": "New Delhi",
+    "state": "Delhi",
+    "address": "",
+    "bio": "",
+    "is_active": true,
+    "is_staff": true,
+    "failed_login_attempts": 0,
+    "locked_until": null,
+    "created_at": "2026-09-04T15:06:25.337Z",
+    "updated_at": "2026-09-04T15:06:25.736Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "outcomes.trainee",
+  "pk": 3,
+  "fields": {
+    "user": null,
+    "unified_id": "FA-24-0198",
+    "name": "Meena Kumari",
+    "course": "Tailoring & Design",
+    "provider": "Udaan",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "gender": "female",
+    "age_band": "25-30",
+    "stage": "placed",
+    "consent_status": "withdrawn",
+    "assigned_trainer": 2,
+    "created_at": "2026-09-04T15:06:26.693Z",
+    "updated_at": "2026-09-04T15:26:26.335Z"
+  }
+},
+{
+  "model": "outcomes.trainee",
+  "pk": 4,
+  "fields": {
+    "user": null,
+    "unified_id": "FA-24-0210",
+    "name": "Javed Ansari",
+    "course": "Electrician",
+    "provider": "Navjeevan",
+    "district": "Guwahati",
+    "state": "Assam",
+    "gender": "male",
+    "age_band": "22-26",
+    "stage": "trained",
+    "consent_status": "active",
+    "assigned_trainer": 2,
+    "created_at": "2026-09-04T15:06:26.713Z",
+    "updated_at": "2026-09-04T15:25:13.795Z"
+  }
+},
+{
+  "model": "outcomes.trainee",
+  "pk": 5,
+  "fields": {
+    "user": null,
+    "unified_id": "FA-24-0241",
+    "name": "Sonal Patil",
+    "course": "Data Entry & GST",
+    "provider": "Saksham",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "gender": "female",
+    "age_band": "19-23",
+    "stage": "retained",
+    "consent_status": "active",
+    "assigned_trainer": 2,
+    "created_at": "2026-09-04T15:06:26.732Z",
+    "updated_at": "2026-09-04T15:06:26.732Z"
+  }
+},
+{
+  "model": "outcomes.trainee",
+  "pk": 2,
+  "fields": {
+    "user": null,
+    "unified_id": "FA-24-0224",
+    "name": "Ravi Kumar",
+    "course": "Healthcare Assistant",
+    "provider": "Jan Disha",
+    "district": "Ranchi",
+    "state": "Jharkhand",
+    "gender": "male",
+    "age_band": "18-24",
+    "stage": "placed",
+    "consent_status": "active",
+    "assigned_trainer": 2,
+    "created_at": "2026-09-04T15:06:26.641Z",
+    "updated_at": "2026-09-04T15:06:26.641Z"
+  }
+},
+{
+  "model": "outcomes.trainee",
+  "pk": 1,
+  "fields": {
+    "user": 3,
+    "unified_id": "FA-24-0182",
+    "name": "Asha Devi",
+    "course": "Solar PV Installer",
+    "provider": "Saksham",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "gender": "female",
+    "age_band": "21-25",
+    "stage": "retained",
+    "consent_status": "active",
+    "assigned_trainer": 2,
+    "created_at": "2026-09-04T15:06:26.581Z",
+    "updated_at": "2026-09-04T15:06:26.581Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 6,
+  "fields": {
+    "trainee": 3,
+    "consent_version": "v1.0",
+    "status": "withdrawn",
+    "consented_at": "2026-09-04T15:06:26.693Z",
+    "withdrawn_at": "2026-09-04T15:25:59.992Z",
+    "source": "portal_interface",
+    "created_at": "2026-09-04T15:25:59.992Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 5,
+  "fields": {
+    "trainee": 5,
+    "consent_version": "v1.0",
+    "status": "granted",
+    "consented_at": "2026-09-04T15:06:26.736Z",
+    "withdrawn_at": null,
+    "source": "portal_opt_in",
+    "created_at": "2026-09-04T15:06:26.737Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 4,
+  "fields": {
+    "trainee": 4,
+    "consent_version": "v1.0",
+    "status": "granted",
+    "consented_at": "2026-09-04T15:06:26.716Z",
+    "withdrawn_at": null,
+    "source": "portal_opt_in",
+    "created_at": "2026-09-04T15:06:26.717Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 3,
+  "fields": {
+    "trainee": 3,
+    "consent_version": "v1.0",
+    "status": "granted",
+    "consented_at": "2026-09-04T15:06:26.698Z",
+    "withdrawn_at": null,
+    "source": "portal_opt_in",
+    "created_at": "2026-09-04T15:06:26.699Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 2,
+  "fields": {
+    "trainee": 2,
+    "consent_version": "v1.0",
+    "status": "granted",
+    "consented_at": "2026-09-04T15:06:26.654Z",
+    "withdrawn_at": null,
+    "source": "portal_opt_in",
+    "created_at": "2026-09-04T15:06:26.655Z"
+  }
+},
+{
+  "model": "outcomes.traineeconsent",
+  "pk": 1,
+  "fields": {
+    "trainee": 1,
+    "consent_version": "v1.0",
+    "status": "granted",
+    "consented_at": "2026-09-04T15:06:26.594Z",
+    "withdrawn_at": null,
+    "source": "portal_opt_in",
+    "created_at": "2026-09-04T15:06:26.596Z"
+  }
+},
+{
+  "model": "outcomes.placement",
+  "pk": 5,
+  "fields": {
+    "trainee": 5,
+    "employer_name": "Zenith Accounting Services",
+    "role": "Accounts Executive",
+    "employment_type": "formal",
+    "wage": "21000.00",
+    "source": "employer_confirmed",
+    "validation_status": "verified",
+    "start_date": "2026-06-06",
+    "created_at": "2026-09-04T15:06:26.741Z",
+    "updated_at": "2026-09-04T15:06:26.741Z"
+  }
+},
+{
+  "model": "outcomes.placement",
+  "pk": 4,
+  "fields": {
+    "trainee": 4,
+    "employer_name": "Brahmaputra Infrastructure",
+    "role": "Junior Electrician",
+    "employment_type": "formal",
+    "wage": "16200.00",
+    "source": "employer_confirmed",
+    "validation_status": "verified",
+    "start_date": "2026-06-06",
+    "created_at": "2026-09-04T15:06:26.721Z",
+    "updated_at": "2026-09-04T15:06:26.722Z"
+  }
+},
+{
+  "model": "outcomes.placement",
+  "pk": 3,
+  "fields": {
+    "trainee": 3,
+    "employer_name": "Self-Employed Boutique",
+    "role": "Master Tailor",
+    "employment_type": "self_employed",
+    "wage": null,
+    "source": "self_reported",
+    "validation_status": "unverified",
+    "start_date": "2026-06-06",
+    "created_at": "2026-09-04T15:06:26.704Z",
+    "updated_at": "2026-09-04T15:06:26.704Z"
+  }
+},
+{
+  "model": "outcomes.placement",
+  "pk": 2,
+  "fields": {
+    "trainee": 2,
+    "employer_name": "Apex Diagnostic Centre",
+    "role": "Ward Assistant",
+    "employment_type": "formal",
+    "wage": "15000.00",
+    "source": "self_reported",
+    "validation_status": "pending",
+    "start_date": "2026-06-06",
+    "created_at": "2026-09-04T15:06:26.670Z",
+    "updated_at": "2026-09-04T15:06:26.670Z"
+  }
+},
+{
+  "model": "outcomes.placement",
+  "pk": 1,
+  "fields": {
+    "trainee": 1,
+    "employer_name": "Surya Power Solutions",
+    "role": "Field Technician",
+    "employment_type": "formal",
+    "wage": "18500.00",
+    "source": "employer_confirmed",
+    "validation_status": "verified",
+    "start_date": "2026-06-06",
+    "created_at": "2026-09-04T15:06:26.610Z",
+    "updated_at": "2026-09-04T15:06:26.610Z"
+  }
+},
+{
+  "model": "outcomes.followup",
+  "pk": 5,
+  "fields": {
+    "trainee": 5,
+    "milestone": "month_12",
+    "channel": "assisted",
+    "status": "responded",
+    "attempts": 3,
+    "due_at": "2026-09-04T15:06:26.744Z",
+    "last_attempt_at": "2026-09-04T15:06:26.744Z",
+    "next_contact_date": null,
+    "response_tag": null,
+    "trainer_notes": null,
+    "notes": "Completed 12-month retention successfully with salary increment.",
+    "created_at": "2026-09-04T15:06:26.745Z",
+    "updated_at": "2026-09-04T15:06:26.745Z"
+  }
+},
+{
+  "model": "outcomes.followup",
+  "pk": 4,
+  "fields": {
+    "trainee": 4,
+    "milestone": "month_3",
+    "channel": "whatsapp",
+    "status": "sent",
+    "attempts": 1,
+    "due_at": "2026-09-04T15:06:26.725Z",
+    "last_attempt_at": "2026-09-04T16:31:55.029Z",
+    "next_contact_date": null,
+    "response_tag": null,
+    "trainer_notes": null,
+    "notes": "Due Sep 08. Scheduled for check-in.",
+    "created_at": "2026-09-04T15:06:26.726Z",
+    "updated_at": "2026-09-04T16:31:55.029Z"
+  }
+},
+{
+  "model": "outcomes.followup",
+  "pk": 3,
+  "fields": {
+    "trainee": 3,
+    "milestone": "month_6",
+    "channel": "whatsapp",
+    "status": "needs_assistance",
+    "attempts": 1,
+    "due_at": "2026-09-04T15:06:26.707Z",
+    "last_attempt_at": "2026-09-04T15:06:26.707Z",
+    "next_contact_date": null,
+    "response_tag": null,
+    "trainer_notes": null,
+    "notes": "Requested local language assistance for micro-enterprise loan application.",
+    "created_at": "2026-09-04T15:06:26.708Z",
+    "updated_at": "2026-09-04T15:06:26.708Z"
+  }
+},
+{
+  "model": "outcomes.followup",
+  "pk": 2,
+  "fields": {
+    "trainee": 2,
+    "milestone": "month_3",
+    "channel": "sms",
+    "status": "queued",
+    "attempts": 1,
+    "due_at": "2026-09-04T15:06:26.683Z",
+    "last_attempt_at": "2026-09-04T15:06:26.683Z",
+    "next_contact_date": null,
+    "response_tag": null,
+    "trainer_notes": null,
+    "notes": "No answer on first call today. Reschedule call.",
+    "created_at": "2026-09-04T15:06:26.685Z",
+    "updated_at": "2026-09-04T15:06:26.685Z"
+  }
+},
+{
+  "model": "outcomes.followup",
+  "pk": 1,
+  "fields": {
+    "trainee": 1,
+    "milestone": "month_12",
+    "channel": "whatsapp",
+    "status": "responded",
+    "attempts": 2,
+    "due_at": "2026-09-04T15:06:26.623Z",
+    "last_attempt_at": "2026-09-04T15:06:26.624Z",
+    "next_contact_date": null,
+    "response_tag": "working",
+    "trainer_notes": null,
+    "notes": "Trainee self-check-in: working. Notes:",
+    "created_at": "2026-09-04T15:06:26.625Z",
+    "updated_at": "2026-09-04T15:39:11.247Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 20,
+  "fields": {
+    "user": 3,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T16:33:17.706Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 19,
+  "fields": {
+    "user": 4,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T16:33:11.213Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 18,
+  "fields": {
+    "user": 4,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T16:33:00.585Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 17,
+  "fields": {
+    "user": 4,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T16:32:55.102Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 16,
+  "fields": {
+    "user": 4,
+    "action": "follow_up_sent",
+    "target_type": "FollowUp",
+    "target_id": "4",
+    "metadata": {
+      "trainee": "Javed Ansari",
+      "channel": "whatsapp",
+      "attempts": 1
+    },
+    "created_at": "2026-09-04T16:31:55.070Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 15,
+  "fields": {
+    "user": 4,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T16:31:11.838Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 14,
+  "fields": {
+    "user": 3,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:40:14.493Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 13,
+  "fields": {
+    "user": 3,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:40:06.926Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 12,
+  "fields": {
+    "user": 3,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:39:42.990Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 11,
+  "fields": {
+    "user": 3,
+    "action": "trainee_responded_follow_up",
+    "target_type": "FollowUp",
+    "target_id": "1",
+    "metadata": {
+      "response": "working"
+    },
+    "created_at": "2026-09-04T15:39:11.253Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 10,
+  "fields": {
+    "user": 3,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:38:38.684Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 9,
+  "fields": {
+    "user": 4,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T15:38:31.040Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 8,
+  "fields": {
+    "user": 5,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "5",
+    "metadata": {},
+    "created_at": "2026-09-04T15:33:12.810Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 7,
+  "fields": {
+    "user": 5,
+    "action": "user_login",
+    "target_type": "User",
+    "target_id": "5",
+    "metadata": {},
+    "created_at": "2026-09-04T15:32:42.673Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 6,
+  "fields": {
+    "user": 4,
+    "action": "user_logout",
+    "target_type": "User",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T15:27:29.028Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 5,
+  "fields": {
+    "user": 4,
+    "action": "report_downloaded",
+    "target_type": "Report",
+    "target_id": "provider_kpi_csv",
+    "metadata": {},
+    "created_at": "2026-09-04T15:26:59.385Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "action": "trainee_updated",
+    "target_type": "Trainee",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:26:26.341Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 3,
+  "fields": {
+    "user": 4,
+    "action": "consent_status_updated",
+    "target_type": "Trainee",
+    "target_id": "3",
+    "metadata": {
+      "status": "withdrawn"
+    },
+    "created_at": "2026-09-04T15:26:00.019Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 2,
+  "fields": {
+    "user": 4,
+    "action": "trainee_updated",
+    "target_type": "Trainee",
+    "target_id": "3",
+    "metadata": {},
+    "created_at": "2026-09-04T15:25:46.406Z"
+  }
+},
+{
+  "model": "outcomes.auditlog",
+  "pk": 1,
+  "fields": {
+    "user": 4,
+    "action": "trainee_updated",
+    "target_type": "Trainee",
+    "target_id": "4",
+    "metadata": {},
+    "created_at": "2026-09-04T15:25:13.801Z"
+  }
+}
+]

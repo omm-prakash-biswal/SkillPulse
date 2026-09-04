@@ -1,12 +1,21 @@
 /*
  * FIELD ATLAS — EDITABLE PROFILE CONTROLLER
- * Manages user profile fields updating, profile avatar upload, and password change
+ * Manages user profile fields updating, profile avatar upload, password change,
+ * and loading of enrolled or instructed vocational courses
  */
 
 document.addEventListener('DOMContentLoaded', function() {
   'use strict';
 
-  // Loads authenticated user profile into the editor form
+  // Escapes HTML content to prevent XSS injection
+  function escapeHTML(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Loads authenticated user profile into the editor form and triggers course listing
   async function loadUserProfile() {
     try {
       const res = await FieldAtlasAPI.get('/api/profile/');
@@ -38,8 +47,71 @@ document.addEventListener('DOMContentLoaded', function() {
       if (avatarImg && u.profile_photo_url) {
         avatarImg.src = u.profile_photo_url;
       }
+
+      loadProfileCourses(u.role);
     } catch (err) {
       console.error('Failed to load profile:', err);
+    }
+  }
+
+  // Fetches and displays enrolled or instructed courses based on user role
+  async function loadProfileCourses(role) {
+    const container = document.getElementById('profile-courses-container');
+    if (!container) return;
+
+    try {
+      if (role === 'trainee') {
+        const enrollments = await FieldAtlasAPI.get('/api/trainee/me/enrollments/');
+        if (!enrollments || enrollments.length === 0) {
+          container.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">No course enrollments on record.</div>';
+          return;
+        }
+
+        container.innerHTML = enrollments.map(e => {
+          const certBadge = e.certificate && e.certificate.status === 'issued'
+            ? `<a href="/api/certificates/${e.certificate.id}/download/" target="_blank" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 3px 8px;">Download Certificate</a>`
+            : '';
+
+          return `
+            <div style="padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 8px; background: var(--color-bg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <strong style="font-size: 0.95rem; color: var(--color-deep-indigo);">${escapeHTML(e.course_title)}</strong>
+                <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+                  ${escapeHTML(e.category || 'Vocational')} · Progress: ${e.completion_percent}% · Status: ${e.status}
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                ${certBadge}
+                <span class="badge ${e.status === 'completed' ? 'badge-teal' : 'badge-indigo'}">${e.status.toUpperCase()}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        const courses = await FieldAtlasAPI.get('/api/courses/');
+        if (!courses || courses.length === 0) {
+          container.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">No courses created under this instructor account.</div>';
+          return;
+        }
+
+        container.innerHTML = courses.map(c => {
+          return `
+            <div style="padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: 8px; background: var(--color-bg); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <strong style="font-size: 0.95rem; color: var(--color-deep-indigo);">${escapeHTML(c.title)}</strong>
+                <div style="font-size: 0.75rem; color: var(--color-text-muted);">
+                  Code: ${escapeHTML(c.course_code)} · ${c.enrolled_count}/${c.capacity} enrolled · ${c.duration_weeks} weeks
+                </div>
+              </div>
+              <div>
+                <span class="badge ${c.status === 'published' ? 'badge-teal' : (c.status === 'closed' ? 'badge-coral' : 'badge-neutral')}">${c.status.toUpperCase()}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    } catch (err) {
+      container.innerHTML = '<div style="color: var(--color-coral); font-size: 0.85rem;">Failed to load course records.</div>';
     }
   }
 
