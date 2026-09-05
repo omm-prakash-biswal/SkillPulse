@@ -20,7 +20,7 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 if not DEBUG and (not SECRET_KEY or 'insecure' in SECRET_KEY.lower() or 'default' in SECRET_KEY.lower()):
     raise RuntimeError("Production security error: Insecure or default SECRET_KEY detected with DEBUG=False.")
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',') if host.strip()]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,.vercel.app').split(',') if host.strip()]
 
 # Application definition
 INSTALLED_APPS = [
@@ -86,10 +86,12 @@ if USE_MYSQL:
         }
     }
 else:
+    # On Vercel serverless environment, local filesystem is read-only except /tmp
+    db_path = Path('/tmp/db.sqlite3') if os.getenv('VERCEL') else (BASE_DIR / 'db.sqlite3')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': db_path,
         }
     }
 
@@ -224,7 +226,8 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in os.getenv(
         'CSRF_TRUSTED_ORIGINS',
-        'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,https://employee-trackerr.vercel.app'
+        'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,https://*.vercel.app,https://employee-trackerr.vercel.app'
     ).split(',') if origin.strip()
 ]
+
 
