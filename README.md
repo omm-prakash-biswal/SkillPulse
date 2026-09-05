@@ -1,13 +1,15 @@
-# FIELD ATLAS — SKILLING OUTCOMES PLATFORM
+# FIELD ATLAS — SKILLPULSE BACKEND API SERVICE
 
-A production-grade, responsive skills and employment outcomes platform for India. Field Atlas connects vocational skilling courses and completion with longitudinal post-placement outcomes, providing tailored operational interfaces for **Trainers** and **Trainees**, 11-language localization (including dynamic RTL for Urdu), cryptographic email OTP authentication, ReportLab verifiable PDF certificates, k-anonymity privacy safeguards, and real SQL persistence via Django 5+ and Django REST Framework.
+A production-grade, secure Django 5+ and Django REST Framework (DRF) backend service for the Field Atlas / SkillPulse outcomes platform. This backend provides complete RESTful endpoints for trainer operations, trainee lifecycle management, cryptographic email OTP verification, longitudinal follow-ups, ReportLab verifiable PDF certificates, k-anonymity privacy safeguards, and real SQL persistence (MySQL / SQLite) with full CORS support for decoupled frontends.
+
+> **Frontend Repository**: The decoupled web client is available at [priyanshu-pgb/SkillPulse-Frontend](https://github.com/priyanshu-pgb/SkillPulse-Frontend).
 
 ---
 
 ## 1. Technology Stack
 
-- **Frontend**: Pure HTML5, Vanilla CSS3, and Vanilla JavaScript (No React, TypeScript, Node.js, Vite, Express, or frontend frameworks).
 - **Backend**: Python 3.12+ (verified on Python 3.14), Django 5+, Django REST Framework (DRF).
+- **CORS Support**: `django-cors-headers` for seamless cross-origin communication with decoupled frontends (e.g., Vercel / Netlify).
 - **Database**: MySQL via PyMySQL driver with SQLite local development fallback.
 - **Visualizations**: Chart.js for wage progression, cohort conversion funnel, provider benchmarking, and diagnostics.
 - **Certificates**: ReportLab 4.0+ for high-fidelity landscape PDF generation with cryptographic verification tokens and direct download links.
