@@ -1,6 +1,6 @@
 """
 Django settings for Field Atlas project.
-Generated for the Field Atlas Skilling Outcomes Platform.
+Generated for the Field Atlas// Placeholder: No changes needed for api.js in this snippetm.
 """
 from pathlib import Path
 import os
@@ -179,11 +179,13 @@ SESSION_COOKIE_AGE = 86400 * 14  # 14 days
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SAMESITE = 'Lax'
+# Cross-origin deployment (frontend/backend on different Vercel subdomains)
+# SameSite=None + Secure=True is required for cross-origin cookie sharing
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
 
 # Production SSL & Cookie Security
-SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG  # Must be True when SameSite=None
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1')
 
@@ -213,11 +215,13 @@ LOGGING = {
 }
 
 # Cross-Origin Resource Sharing (CORS) for decoupled frontend
-CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL', 'True').lower() in ('true', '1', 'yes')
+# CORS_ALLOW_ALL_ORIGINS must be False when CORS_ALLOW_CREDENTIALS=True
+# (browsers reject wildcard CORS with credentials)
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     origin.strip() for origin in os.getenv(
         'CORS_ALLOWED_ORIGINS',
-        'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,https://employee-trackerr.vercel.app'
+        'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500,http://localhost:8080,https://skill-pulse-frontend.vercel.app,https://employee-trackerr.vercel.app'
     ).split(',') if origin.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
