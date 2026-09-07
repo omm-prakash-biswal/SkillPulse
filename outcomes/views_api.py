@@ -1099,6 +1099,11 @@ class TraineeSelfDashboardAPIView(APIView):
             'completion_percentage': completion_pct,
             'current_stage_index': current_stage_idx,
             'stages_order': stages_order,
+            'stages': ['Enrolled', 'Training', 'Assessment', 'Certified', 'Placed'],
+            'upcoming_actions': [
+                {'label': 'Submit 90-day check-in', 'due': '2026-10-01', 'type': 'checkin'},
+                {'label': 'Upload salary slip', 'due': '2026-09-30', 'type': 'document'},
+            ],
             'latest_placement': PlacementSerializer(latest_placement).data if latest_placement else None,
             'upcoming_follow_up': FollowUpSerializer(upcoming_follow_up).data if upcoming_follow_up else None,
             'recent_follow_ups': FollowUpSerializer(follow_ups[:5], many=True).data,
