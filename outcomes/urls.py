@@ -73,6 +73,15 @@ urlpatterns = [
     path('api/trainee/me/applications/', views_api.TraineeMyApplicationsAPIView.as_view(), name='api_trainee_my_applications'),
     path('api/trainee/me/enrollments/', views_api.TraineeMyEnrollmentsAPIView.as_view(), name='api_trainee_my_enrollments'),
     path('api/trainee/me/enrollments/<int:pk>/outcome/', views_api.TraineeOutcomeAPIView.as_view(), name='api_trainee_enrollment_outcome'),
+    path('api/trainee/trainer-classes/', views_api.TraineeTrainerClassesAPIView.as_view(), name='api_trainee_trainer_classes'),
+    path('api/trainee/streak-attendance/', views_api.TraineeStreakAttendanceAPIView.as_view(), name='api_trainee_streak_attendance'),
+    path('api/trainee/govt-courses/', views_api.TraineeGovtCoursesAPIView.as_view(), name='api_trainee_govt_courses'),
+    path('api/trainee/schemes/', views_api.TraineeSchemesAPIView.as_view(), name='api_trainee_schemes'),
+    path('api/trainee/placement-submit/', views_api.TraineePlacementSubmitAPIView.as_view(), name='api_trainee_placement_submit'),
+
+    # REST APIs: 4-Digit Phone SMS OTP
+    path('api/auth/phone-sms-otp/', views_api.PhoneSMSOTPAPIView.as_view(), name='api_phone_sms_otp'),
+    path('api/auth/phone-verify-reset/', views_api.PhoneVerifyResetAPIView.as_view(), name='api_phone_verify_reset'),
 
     # REST APIs: Certificates & Notifications
     path('api/certificates/<int:pk>/download/', views_api.CertificateDownloadAPIView.as_view(), name='api_certificate_download'),

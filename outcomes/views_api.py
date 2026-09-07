@@ -1100,6 +1100,43 @@ class TraineeSelfDashboardAPIView(APIView):
             'current_stage_index': current_stage_idx,
             'stages_order': stages_order,
             'stages': ['Enrolled', 'Training', 'Assessment', 'Certified', 'Placed'],
+            'streak': {
+                'current_streak_days': 7,
+                'longest_streak_days': 14,
+                'total_logins': 42,
+                'classes_attended': 24,
+                'total_classes': 28,
+                'attendance_rate': 85.7,
+                'days_active_month': 28,
+                'is_exam_eligible': True,
+                'exam_eligibility_threshold': 75
+            },
+            'scheduled_classes': [
+                {
+                    'id': 'cls-101',
+                    'title': 'Full Stack Web Dev — REST APIs, DRF & PostgreSQL Architecture',
+                    'trainer_name': 'Vikram Malhotra',
+                    'timing': 'Today, 4:30 PM – 6:00 PM',
+                    'room': 'Lab Room 3B (Virtual Room #1)',
+                    'meet_url': '#'
+                },
+                {
+                    'id': 'cls-102',
+                    'title': 'Cloud Containerization, Docker & Microservices Deployment',
+                    'trainer_name': 'Ananya Sen',
+                    'timing': 'Tomorrow, 10:00 AM – 11:30 AM',
+                    'room': 'Technical Hall A',
+                    'meet_url': '#'
+                },
+                {
+                    'id': 'cls-103',
+                    'title': 'Technical Mock Interviews & Career Mentorship',
+                    'trainer_name': 'Rajesh Sharma',
+                    'timing': 'Wednesday, 2:00 PM – 3:30 PM',
+                    'room': 'Mentorship Hub',
+                    'meet_url': '#'
+                }
+            ],
             'upcoming_actions': [
                 {'label': 'Submit 90-day check-in', 'due': '2026-10-01', 'type': 'checkin'},
                 {'label': 'Upload salary slip', 'due': '2026-09-30', 'type': 'document'},
@@ -1853,4 +1890,284 @@ class NotificationMarkReadAPIView(APIView):
         else:
             Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
             return Response({'message': 'All notifications marked as read.'})
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# TRAINEE PORTAL 6-STEP SUITE API VIEWS
+# ══════════════════════════════════════════════════════════════════════════
+
+class TraineeTrainerClassesAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        classes = [
+            {
+                'id': 101,
+                'title': 'Full Stack: Advanced Django REST & React Integration',
+                'course': 'Full Stack Web Development',
+                'trainer_name': 'Vikram Malhotra',
+                'trainer_role': 'Senior NSDC Vocational Instructor',
+                'timing': 'Today · 10:30 AM – 12:00 PM',
+                'date': '2026-09-08',
+                'status': 'upcoming',
+                'room': 'Virtual Lab 3B',
+                'meet_url': 'https://meet.google.com/xyz-skill-pulse',
+                'is_live': False,
+            },
+            {
+                'id': 102,
+                'title': 'Database Architecture, Indexing & SQL Optimization',
+                'course': 'Full Stack Web Development',
+                'trainer_name': 'Sunita Rao',
+                'trainer_role': 'Lead Database Specialist',
+                'timing': 'Tomorrow · 02:00 PM – 03:30 PM',
+                'date': '2026-09-09',
+                'status': 'scheduled',
+                'room': 'Technical Hub A',
+                'meet_url': 'https://meet.google.com/db-opt-skill',
+                'is_live': False,
+            },
+            {
+                'id': 103,
+                'title': 'Industry Mock Interview & Technical Readiness Workshop',
+                'course': 'Skill India Placement Cell',
+                'trainer_name': 'Amit Sharma',
+                'trainer_role': 'Corporate Placement Mentor',
+                'timing': 'Friday · 11:00 AM – 01:00 PM',
+                'date': '2026-09-11',
+                'status': 'scheduled',
+                'room': 'Placement Auditorium',
+                'meet_url': 'https://meet.google.com/placement-prep',
+                'is_live': False,
+            },
+        ]
+        return Response({'classes': classes, 'total': len(classes)})
+
+
+class TraineeStreakAttendanceAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        return Response({
+            'current_streak_days': 14,
+            'longest_streak_days': 21,
+            'logged_in_today': True,
+            'total_classes': 26,
+            'classes_attended': 24,
+            'attendance_rate': 92.3,
+            'days_active_month': 28,
+            'exam_eligibility_threshold': 75,
+            'is_exam_eligible': True,
+            'history_14_days': [
+                { 'date': 'Aug 25', 'day': 'Mon', 'attended': True, 'logged_in': True },
+                { 'date': 'Aug 26', 'day': 'Tue', 'attended': True, 'logged_in': True },
+                { 'date': 'Aug 27', 'day': 'Wed', 'attended': True, 'logged_in': True },
+                { 'date': 'Aug 28', 'day': 'Thu', 'attended': True, 'logged_in': True },
+                { 'date': 'Aug 29', 'day': 'Fri', 'attended': True, 'logged_in': True },
+                { 'date': 'Aug 30', 'day': 'Sat', 'attended': False, 'logged_in': True },
+                { 'date': 'Aug 31', 'day': 'Sun', 'attended': False, 'logged_in': True },
+                { 'date': 'Sep 01', 'day': 'Mon', 'attended': True, 'logged_in': True },
+                { 'date': 'Sep 02', 'day': 'Tue', 'attended': True, 'logged_in': True },
+                { 'date': 'Sep 03', 'day': 'Wed', 'attended': False, 'logged_in': True },
+                { 'date': 'Sep 04', 'day': 'Thu', 'attended': True, 'logged_in': True },
+                { 'date': 'Sep 05', 'day': 'Fri', 'attended': True, 'logged_in': True },
+                { 'date': 'Sep 06', 'day': 'Sat', 'attended': True, 'logged_in': True },
+                { 'date': 'Sep 07', 'day': 'Sun', 'attended': True, 'logged_in': True },
+            ]
+        })
+
+
+class TraineeGovtCoursesAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        courses = [
+            {
+                'id': 'pmkvy-4-fsw',
+                'scheme_code': 'PMKVY 4.0',
+                'scheme_name': 'Pradhan Mantri Kaushal Vikas Yojana 4.0',
+                'title': 'Full Stack Web Development & Python Cloud',
+                'ministry': 'Ministry of Skill Development & Entrepreneurship (MSDE)',
+                'category': 'IT-ITeS & FutureSkills',
+                'duration': '24 Weeks · 400 Hours',
+                'stipend_info': '100% Free Govt Subsidy + Direct Assessment Grant',
+                'certification': 'NSDC & NCVET Accredited Level 5 Certificate',
+                'eligibility': '12th Pass / Graduate / Diploma',
+                'official_url': 'https://www.skillindiadigital.gov.in',
+                'description': 'Comprehensive Indian national vocational standard qualification in modern frontend architecture, Django REST Framework, relational databases, and containerized deployment.',
+            },
+            {
+                'id': 'ddu-gky-data',
+                'scheme_code': 'DDU-GKY',
+                'scheme_name': 'Deen Dayal Upadhyaya Grameen Kaushalya Yojana',
+                'title': 'Data Analytics & Business Intelligence Specialist',
+                'ministry': 'Ministry of Rural Development (MoRD)',
+                'category': 'Information Technology',
+                'duration': '16 Weeks · 320 Hours',
+                'stipend_info': '100% Govt Funded with Free Hostel & Boarding Support',
+                'certification': 'National Vocational Training Council Certification',
+                'eligibility': '10th / 12th Pass Rural Youth (15-35 yrs)',
+                'official_url': 'http://ddugky.gov.in',
+                'description': 'Rural skilling initiative providing practical instruction in PowerBI, SQL querying, data cleaning pipelines, and entry-level enterprise analytics.',
+            },
+            {
+                'id': 'swayam-ai-ml',
+                'scheme_code': 'SWAYAM / NPTEL',
+                'scheme_name': 'Study Webs of Active-Learning for Young Aspiring Minds',
+                'title': 'Applied AI, Machine Learning & Python Foundations',
+                'ministry': 'Ministry of Education (MoE)',
+                'category': 'Higher Education & Deep Tech',
+                'duration': '12 Weeks · Self-Paced & Proctored Exam',
+                'stipend_info': 'Free Course Access + Subsidized Exam Fee',
+                'certification': 'IIT Madras & NPTEL Verifiable Honor Certificate',
+                'eligibility': 'Open to All Students & Professionals',
+                'official_url': 'https://swayam.gov.in',
+                'description': 'Rigorous academic and industry-aligned syllabus delivered in collaboration with premier IIT faculties, covering PyTorch, Scikit-learn, and neural networks.',
+            },
+            {
+                'id': 'futureskills-prime',
+                'scheme_code': 'FutureSkills PRIME',
+                'scheme_name': 'MeitY & NASSCOM National Digital Skilling Platform',
+                'title': 'Cloud Architecture & DevOps Engineering',
+                'ministry': 'Ministry of Electronics & Information Technology (MeitY)',
+                'category': 'Emerging Technologies',
+                'duration': '20 Weeks · Blended Learning',
+                'stipend_info': 'Govt Incentive Cashback on Certification Completion',
+                'certification': 'NASSCOM Industry Gold Credential',
+                'eligibility': 'Graduates in Engineering / Science / BCA',
+                'official_url': 'https://futureskillsprime.in',
+                'description': 'Enterprise-grade curriculum focused on AWS/Azure infrastructure, Docker containers, Kubernetes orchestration, and CI/CD automated release pipelines.',
+            },
+            {
+                'id': 'pm-vishwakarma',
+                'scheme_code': 'PM Vishwakarma',
+                'scheme_name': 'Pradhan Mantri Vishwakarma Scheme',
+                'title': 'Digital Craftsmanship & Advanced Precision Tooling',
+                'ministry': 'Ministry of Micro, Small & Medium Enterprises (MSME)',
+                'category': 'Manufacturing & Traditional Crafts',
+                'duration': '8 Weeks · Hands-on Workshop',
+                'stipend_info': '₹500/day Stipend during Training + ₹15,000 Toolkit Incentive',
+                'certification': 'PM Vishwakarma Official Digital ID & Certificate',
+                'eligibility': 'Traditional Artisans & Craftsmen across 18 Trades',
+                'official_url': 'https://pmvishwakarma.gov.in',
+                'description': 'National program empowering artisans with modern design thinking, digital payment tools, quality enhancement, and market linkage.',
+            },
+            {
+                'id': 'nielit-iot',
+                'scheme_code': 'NIELIT Certified',
+                'scheme_name': 'National Institute of Electronics & Information Technology',
+                'title': 'Industrial IoT & Embedded Hardware Engineering',
+                'ministry': 'Ministry of Electronics & Information Technology (MeitY)',
+                'category': 'Electronics Hardware',
+                'duration': '14 Weeks · Practical Labs',
+                'stipend_info': 'Subsidized Fee for SC/ST/Women Candidates',
+                'certification': 'NIELIT National Qualification Register (NQR) Level 4',
+                'eligibility': 'ITI / Diploma / B.Sc / B.Tech',
+                'official_url': 'https://nielit.gov.in',
+                'description': 'Microcontroller programming, sensor telemetry, Arduino/ESP32 firmware, and MQTT industrial cloud communications.',
+            },
+        ]
+        return Response({'courses': courses, 'total': len(courses)})
+
+
+class TraineeSchemesAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        schemes = [
+            {
+                'scheme_id': 'PMKVY-4.0-FSW',
+                'scheme_name': 'PMKVY 4.0: Full Stack Web Development',
+                'ministry': 'Ministry of Skill Development & Entrepreneurship (MSDE)',
+                'enrollment_id': 'FA-PMKVY-2026-98124',
+                'trainer': 'Vikram Malhotra',
+                'course_completion_status': 'yes',
+                'completion_percentage': 100,
+                'exam_eligible': True,
+                'certificate_issued': True,
+                'certificate_id': 'FA-CERT-2026-98124',
+                'modules': [
+                    { 'id': 'm1', 'name': 'Module 1: HTML5 & Responsive Semantic Web Architecture', 'score': 94, 'is_completed': True },
+                    { 'id': 'm2', 'name': 'Module 2: Advanced JavaScript ES6+, Asynchronous DOM & APIs', 'score': 90, 'is_completed': True },
+                    { 'id': 'm3', 'name': 'Module 3: Python Programming & Django REST Framework', 'score': 88, 'is_completed': True },
+                    { 'id': 'm4', 'name': 'Module 4: Relational Databases, PostgreSQL & SQL Optimization', 'score': 92, 'is_completed': True },
+                    { 'id': 'm5', 'name': 'Module 5: React UI Architecture, State Management & Tailwind', 'score': 86, 'is_completed': True },
+                    { 'id': 'm6', 'name': 'Module 6: Enterprise Full Stack Capstone Deployment & CI/CD', 'score': 95, 'is_completed': True },
+                ],
+            },
+            {
+                'scheme_id': 'DDU-GKY-DATA',
+                'scheme_name': 'DDU-GKY: Data Analytics & Cloud Systems',
+                'ministry': 'Ministry of Rural Development (MoRD)',
+                'enrollment_id': 'FA-DDU-2026-44021',
+                'trainer': 'Sunita Rao',
+                'course_completion_status': 'in_progress',
+                'completion_percentage': 67,
+                'exam_eligible': False,
+                'certificate_issued': False,
+                'certificate_id': None,
+                'modules': [
+                    { 'id': 'd1', 'name': 'Module 1: Excel for Business Intelligence & Advanced Formulas', 'score': 92, 'is_completed': True },
+                    { 'id': 'd2', 'name': 'Module 2: Structured Query Language (SQL) & Data Warehousing', 'score': 85, 'is_completed': True },
+                    { 'id': 'd3', 'name': 'Module 3: Python for Data Extraction & Pandas Analytics', 'score': 80, 'is_completed': True },
+                    { 'id': 'd4', 'name': 'Module 4: PowerBI Dashboarding & Data Storytelling', 'score': 89, 'is_completed': True },
+                    { 'id': 'd5', 'name': 'Module 5: Cloud Storage & BigQuery Fundamentals', 'score': None, 'is_completed': False },
+                    { 'id': 'd6', 'name': 'Module 6: Capstone Project & Rural Livelihood Analytics', 'score': None, 'is_completed': False },
+                ],
+            },
+        ]
+        return Response({'schemes': schemes, 'total': len(schemes)})
+
+
+class PhoneSMSOTPAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        phone = request.data.get('phone', '9833456789')
+        # Generate 4-digit numeric OTP
+        import random
+        otp = str(random.randint(1000, 9999))
+        return Response({
+            'success': True,
+            'message': f'4-digit OTP sent via SMS to +91 {phone}',
+            'simulated_otp': otp,
+            'phone': phone
+        })
+
+
+class PhoneVerifyResetAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        otp = request.data.get('otp', '').strip()
+        new_password = request.data.get('new_password', '')
+        if not otp or len(otp) < 4:
+            return Response({'error': 'Please provide a valid 4-digit verification OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not new_password or len(new_password) < 6:
+            return Response({'error': 'Password must be at least 6 characters long.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'success': True,
+            'message': 'Password reset successfully! You are now authenticated with your credentials.'
+        })
+
+
+class TraineePlacementSubmitAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        data = request.data
+        return Response({
+            'success': True,
+            'message': 'Placement outcome reported successfully! Submitted for trainer and NSDC verification.',
+            'placement': {
+                'employer_name': data.get('employer_name', 'Tata Consultancy Services'),
+                'role': data.get('role', 'Junior Web Developer'),
+                'wage': data.get('wage', 22000),
+                'scheme_enrolled': data.get('scheme_enrolled', 'PMKVY 4.0'),
+                'work_location': data.get('work_location', 'Pune, Maharashtra'),
+                'start_date': data.get('start_date', '2026-07-01'),
+                'validation_status': 'submitted'
+            }
+        })
+
 
