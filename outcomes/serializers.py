@@ -50,20 +50,26 @@ class CustomUserUpdateSerializer(serializers.ModelSerializer):
         return normalize_provider_name(value)
 
 
-# Handles user registration with mandatory OTP validation and role restrictions
+# Handles user registration with Aadhaar validation, mobile, and role restrictions
 class RegisterSerializer(serializers.Serializer):
-    full_name = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
+    full_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
+    aadhaar_name = serializers.CharField(max_length=150, required=False, allow_blank=True)
+    aadhaar_number = serializers.CharField(max_length=30, required=False, allow_blank=True)
+    phone_number = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    mobile_number = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
     password = serializers.CharField(write_only=True)
     role = serializers.ChoiceField(choices=['trainer', 'trainee'])
     provider = serializers.CharField(max_length=150, required=False, allow_blank=True)
     district = serializers.CharField(max_length=100, required=False, allow_blank=True)
     state = serializers.CharField(max_length=100, required=False, allow_blank=True)
     preferred_language = serializers.CharField(max_length=10, default='en')
-    otp_code = serializers.CharField(max_length=6, min_length=6, required=True)
+    otp_code = serializers.CharField(max_length=6, required=False, allow_blank=True)
 
-    # Validates that the email is not already registered in the system
+    # Validates that the email is not already registered in the system if supplied
     def validate_email(self, value):
+        if not value:
+            return ''
         normalized = value.lower().strip()
         if CustomUser.objects.filter(email=normalized).exists():
             raise serializers.ValidationError('An account with this email address already exists.')

@@ -174,6 +174,16 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Field Atlas <noreply@field
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Compulsory Session Memory Cache Configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'skillpulse-session-memory-cache',
+        'TIMEOUT': 86400,
+    }
+}
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
 # Session Cookie and Security Settings
 SESSION_COOKIE_AGE = 86400 * 14  # 14 days
 SESSION_SAVE_EVERY_REQUEST = True
@@ -182,7 +192,9 @@ CSRF_COOKIE_HTTPONLY = False
 # Cross-origin deployment (frontend/backend on different Vercel subdomains)
 # SameSite=None + Secure=True is required for cross-origin cookie sharing
 SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG
 
 # Production SSL & Cookie Security
 SESSION_COOKIE_SECURE = not DEBUG  # Must be True when SameSite=None
