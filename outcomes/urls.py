@@ -34,6 +34,15 @@ urlpatterns = [
 
     # REST APIs: Trainer & Outcomes Management
     path('api/trainer/dashboard/', views_api.TrainerDashboardAPIView.as_view(), name='api_trainer_dashboard'),
+    path('api/trainer/govt-courses/', views_api.TrainerGovtCoursesAPIView.as_view(), name='api_trainer_govt_courses'),
+    path('api/trainer/courses/analytics/', views_api.TrainerCourseAnalyticsAPIView.as_view(), name='api_trainer_course_analytics'),
+    path('api/trainer/courses/efficiency/', views_api.TrainerCourseEfficiencyAPIView.as_view(), name='api_trainer_course_efficiency'),
+    path('api/trainer/courses/create/', views_api.TrainerCreateCourseAPIView.as_view(), name='api_trainer_create_course'),
+    path('api/trainer/courses/custom-list/', views_api.TrainerCustomCourseListAPIView.as_view(), name='api_trainer_custom_course_list'),
+    path('api/trainer/placements/confirmation/', views_api.TrainerPlacementConfirmationAPIView.as_view(), name='api_trainer_placement_confirmation'),
+    path('api/trainer/placements/confirm-action/', views_api.TrainerConfirmPlacementActionAPIView.as_view(), name='api_trainer_confirm_placement_action'),
+    path('api/trainer/qualification/', views_api.TrainerQualificationAPIView.as_view(), name='api_trainer_qualification'),
+    path('api/trainer/qualification/verify/', views_api.TrainerQualificationVerifyAPIView.as_view(), name='api_trainer_qualification_verify'),
     path('api/outcomes/trainees/', views_api.TraineeListCreateAPIView.as_view(), name='api_trainees_list_create'),
     path('api/outcomes/trainees/<int:pk>/', views_api.TraineeDetailAPIView.as_view(), name='api_trainee_detail'),
     path('api/outcomes/trainees/seed-demo/', views_api.SeedDemoTraineesAPIView.as_view(), name='api_seed_trainees'),
