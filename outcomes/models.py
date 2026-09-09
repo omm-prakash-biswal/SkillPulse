@@ -163,6 +163,10 @@ class Trainee(models.Model):
         related_name='assigned_trainees',
         verbose_name='Assigned Trainer'
     )
+    baseline_wage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0.0, verbose_name='Pre-Training Baseline Monthly Wage (INR)')
+    alternate_phone_number = models.CharField(max_length=20, blank=True, verbose_name='Alternate / Secondary Phone')
+    secondary_contact_name = models.CharField(max_length=150, blank=True, verbose_name='Secondary Contact Name')
+    secondary_contact_relation = models.CharField(max_length=50, blank=True, verbose_name='Secondary Contact Relationship')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
 
@@ -234,6 +238,12 @@ class Placement(models.Model):
         ('disputed', 'Disputed'),
     )
 
+    TRAINING_RELEVANCE_CHOICES = (
+        ('directly_related', 'Directly Related'),
+        ('partially_related', 'Partially Related'),
+        ('unrelated', 'Unrelated'),
+    )
+
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE, related_name='placements', verbose_name='Trainee')
     employer_name = models.CharField(max_length=150, verbose_name='Employer / Enterprise Name')
     role = models.CharField(max_length=150, verbose_name='Job Role')
@@ -242,6 +252,17 @@ class Placement(models.Model):
     source = models.CharField(max_length=30, choices=SOURCES, default='self_reported', verbose_name='Data Source')
     validation_status = models.CharField(max_length=30, choices=VALIDATION_STATUSES, default='pending', verbose_name='Validation Status')
     start_date = models.DateField(null=True, blank=True, verbose_name='Employment Start Date')
+    employer_contact_email = models.EmailField(blank=True, null=True, verbose_name='Employer HR Contact Email')
+    employer_contact_phone = models.CharField(max_length=20, blank=True, verbose_name='Employer HR Contact Phone')
+    employer_verification_token = models.UUIDField(default=uuid.uuid4, null=True, blank=True, db_index=True, editable=False, verbose_name='Employer Verification Token')
+    employer_verified_at = models.DateTimeField(null=True, blank=True, verbose_name='Employer Verified At')
+    employer_remarks = models.TextField(blank=True, null=True, verbose_name='Employer Verification Remarks')
+    enterprise_name = models.CharField(max_length=150, blank=True, null=True, verbose_name='Enterprise / Venture Name')
+    udyam_registration_number = models.CharField(max_length=30, blank=True, null=True, verbose_name='Udyam MSME Registration Number')
+    monthly_net_profit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Monthly Net Profit (INR)')
+    workers_employed = models.PositiveIntegerField(default=0, verbose_name='Additional Workers Employed')
+    apprenticeship_contract_id = models.CharField(max_length=50, blank=True, null=True, verbose_name='Apprenticeship Contract / NAPS ID')
+    training_relevance = models.CharField(max_length=30, choices=TRAINING_RELEVANCE_CHOICES, default='directly_related', verbose_name='Relevance of Training')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
 
@@ -292,6 +313,10 @@ class FollowUp(models.Model):
     last_attempt_at = models.DateTimeField(null=True, blank=True, verbose_name='Last Attempt At')
     next_contact_date = models.DateField(null=True, blank=True, verbose_name='Next Contact Date')
     response_tag = models.CharField(max_length=100, null=True, blank=True, verbose_name='Response Category')
+    reported_wage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Updated Wage at Milestone (INR)')
+    attrition_reason = models.CharField(max_length=50, blank=True, null=True, verbose_name='Reason for Job Change or Exit')
+    escalated_to_mobilizer = models.BooleanField(default=False, verbose_name='Escalated to Village Mobilizer')
+    escalation_notes = models.TextField(blank=True, null=True, verbose_name='Mobilizer Outreach Escalation Notes')
     trainer_notes = models.TextField(null=True, blank=True, verbose_name='Trainer Outreach Notes')
     notes = models.TextField(null=True, blank=True, verbose_name='Field Notes')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
@@ -571,6 +596,40 @@ class TraineeOutcome(models.Model):
         ('disputed', 'Disputed'),
     )
 
+    TRAINING_RELEVANCE_CHOICES = (
+        ('directly_related', 'Directly Related'),
+        ('partially_related', 'Partially Related'),
+        ('unrelated', 'Unrelated'),
+    )
+
+    NON_PLACEMENT_REASONS = (
+        ('skill_mismatch', 'Skill mismatch with job requirements'),
+        ('no_local_demand', 'No local job demand / industry vacancies'),
+        ('location_migration', 'Location / Migration barrier'),
+        ('family_social', 'Family / Social constraints'),
+        ('wage_expectations', 'Offered wage below expectations'),
+        ('continuing_education', 'Opted for higher education / further training'),
+        ('health_personal', 'Health or personal reasons'),
+    )
+
+    SKILL_GAP_CHOICES = (
+        ('practical_tools', 'Practical hands-on & modern tool proficiency'),
+        ('communication_english', 'Professional communication & spoken English'),
+        ('domain_theory', 'Core technical domain knowledge'),
+        ('interview_prep', 'Interview preparedness & aptitude testing'),
+        ('digital_literacy', 'Digital literacy & workplace software'),
+        ('none', 'No significant skill gap'),
+    )
+
+    ATTRITION_REASONS = (
+        ('low_wage_growth', 'Low wage growth or delayed salary'),
+        ('poor_work_environment', 'Poor work environment or long hours'),
+        ('long_commute_relocation', 'Excessive commute or forced relocation'),
+        ('better_offer', 'Secured better career opportunity'),
+        ('family_personal', 'Family / health reasons'),
+        ('contract_ended', 'Apprenticeship / fixed contract ended'),
+    )
+
     enrollment = models.OneToOneField(Enrollment, on_delete=models.CASCADE, related_name='outcome', verbose_name='Linked Course Enrollment')
     employment_status = models.CharField(max_length=35, choices=STATUS_CHOICES, db_index=True, verbose_name='Current Employment Status')
     employer_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Employer or Enterprise Name')
@@ -579,6 +638,15 @@ class TraineeOutcome(models.Model):
     employment_type = models.CharField(max_length=50, blank=True, null=True, verbose_name='Employment Contract Type')
     current_district = models.CharField(max_length=100, blank=True, null=True, verbose_name='Current Working District')
     current_state = models.CharField(max_length=100, blank=True, null=True, verbose_name='Current Working State')
+    training_relevance = models.CharField(max_length=30, choices=TRAINING_RELEVANCE_CHOICES, default='directly_related', verbose_name='Relevance of Training')
+    non_placement_reason = models.CharField(max_length=50, choices=NON_PLACEMENT_REASONS, blank=True, null=True, verbose_name='Reason for Non-Placement')
+    skill_gap = models.CharField(max_length=50, choices=SKILL_GAP_CHOICES, blank=True, null=True, verbose_name='Key Identified Skill Gap')
+    attrition_reason = models.CharField(max_length=50, choices=ATTRITION_REASONS, blank=True, null=True, verbose_name='Reason for Attrition')
+    enterprise_name = models.CharField(max_length=150, blank=True, null=True, verbose_name='Enterprise / Business Name')
+    udyam_registration_number = models.CharField(max_length=30, blank=True, null=True, verbose_name='Udyam MSME Registration Number')
+    monthly_net_profit = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Monthly Net Profit (INR)')
+    workers_employed = models.PositiveIntegerField(default=0, verbose_name='Additional Workers Employed')
+    apprenticeship_contract_id = models.CharField(max_length=50, blank=True, null=True, verbose_name='Apprenticeship Contract ID')
     response_notes = models.TextField(blank=True, null=True, verbose_name='Trainee Qualitative Notes')
     submitted_at = models.DateTimeField(auto_now_add=True, verbose_name='Submitted At')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Last Updated At')

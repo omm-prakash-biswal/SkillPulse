@@ -255,11 +255,64 @@ const FieldAtlasCharts = (function() {
     });
   }
 
+  let skillGapChartInstance = null;
+
+  // Renders horizontal bar chart displaying identified skill gap diagnostics
+  function renderSkillGapChart(canvasId, data) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    if (skillGapChartInstance) {
+      skillGapChartInstance.destroy();
+    }
+
+    const labels = data && data.labels ? data.labels : ['Practical Hands-on Tools', 'Communication & Spoken English', 'Core Technical Theory', 'Interview Preparedness', 'Digital Workplace Software'];
+    const values = data && data.values ? data.values : [38, 27, 18, 11, 6];
+
+    skillGapChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Skill Gap Reports',
+          data: values,
+          backgroundColor: ['#0E8176', '#1E2749', '#D69541', '#49618B', '#D56F58'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ` ${ctx.raw} trainees flagged`; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { color: '#64748B', font: { family: 'Plus Jakarta Sans', size: 10 } },
+            grid: { color: '#E2E8F0' }
+          },
+          y: {
+            ticks: { color: '#1E2749', font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
   return {
     renderWageChart: renderWageChart,
     renderFunnelChart: renderFunnelChart,
     renderProviderPulseChart: renderProviderPulseChart,
-    renderNonPlacementChart: renderNonPlacementChart
+    renderNonPlacementChart: renderNonPlacementChart,
+    renderSkillGapChart: renderSkillGapChart
   };
 })();
 

@@ -99,9 +99,14 @@ class PlacementSerializer(serializers.ModelSerializer):
         model = Placement
         fields = [
             'id', 'trainee', 'trainee_name', 'employer_name', 'role', 'employment_type',
-            'wage', 'source', 'validation_status', 'start_date', 'created_at', 'updated_at'
+            'wage', 'source', 'validation_status', 'start_date',
+            'employer_contact_email', 'employer_contact_phone', 'employer_verification_token',
+            'employer_verified_at', 'employer_remarks', 'enterprise_name',
+            'udyam_registration_number', 'monthly_net_profit', 'workers_employed',
+            'apprenticeship_contract_id', 'training_relevance',
+            'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'employer_verification_token', 'employer_verified_at', 'created_at', 'updated_at']
 
     # Validates that wage is a non-negative number if entered
     def validate_wage(self, value):
@@ -128,6 +133,8 @@ class FollowUpSerializer(serializers.ModelSerializer):
     trainee_course = serializers.CharField(source='trainee.course', read_only=True)
     trainee_district = serializers.CharField(source='trainee.district', read_only=True)
     trainee_consent = serializers.CharField(source='trainee.consent_status', read_only=True)
+    trainee_alternate_phone = serializers.CharField(source='trainee.alternate_phone_number', read_only=True)
+    trainee_secondary_contact = serializers.CharField(source='trainee.secondary_contact_name', read_only=True)
     is_overdue = serializers.BooleanField(read_only=True)
     is_due_today = serializers.BooleanField(read_only=True)
 
@@ -136,9 +143,11 @@ class FollowUpSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'trainee', 'trainee_name', 'trainee_unified_id',
             'trainee_course', 'trainee_district', 'trainee_consent',
+            'trainee_alternate_phone', 'trainee_secondary_contact',
             'milestone', 'channel', 'status', 'attempts', 'due_at',
             'last_attempt_at', 'next_contact_date', 'response_tag',
-            'trainer_notes', 'notes', 'is_overdue', 'is_due_today',
+            'reported_wage', 'attrition_reason', 'escalated_to_mobilizer',
+            'escalation_notes', 'trainer_notes', 'notes', 'is_overdue', 'is_due_today',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'attempts', 'last_attempt_at', 'is_overdue', 'is_due_today', 'created_at', 'updated_at']
@@ -156,6 +165,7 @@ class TraineeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'unified_id', 'name', 'course', 'provider', 'district',
             'state', 'gender', 'age_band', 'stage', 'consent_status',
+            'baseline_wage', 'alternate_phone_number', 'secondary_contact_name', 'secondary_contact_relation',
             'has_active_consent', 'assigned_trainer', 'assigned_trainer_name',
             'placements', 'latest_placement', 'created_at', 'updated_at'
         ]
@@ -175,7 +185,8 @@ class TraineeCreateSerializer(serializers.ModelSerializer):
         model = Trainee
         fields = [
             'unified_id', 'name', 'course', 'provider', 'district',
-            'state', 'gender', 'age_band', 'stage', 'consent_status'
+            'state', 'gender', 'age_band', 'stage', 'consent_status',
+            'baseline_wage', 'alternate_phone_number', 'secondary_contact_name', 'secondary_contact_relation'
         ]
 
     # Validates that the unified ID is non-empty and formatted cleanly
@@ -485,6 +496,9 @@ class TraineeOutcomeSerializer(serializers.ModelSerializer):
             'id', 'enrollment', 'course_title', 'course_code', 'trainee_name',
             'trainee_unified_id', 'employment_status', 'employer_name', 'job_role',
             'monthly_earning', 'employment_type', 'current_district', 'current_state',
+            'training_relevance', 'non_placement_reason', 'skill_gap', 'attrition_reason',
+            'enterprise_name', 'udyam_registration_number', 'monthly_net_profit',
+            'workers_employed', 'apprenticeship_contract_id',
             'response_notes', 'submitted_at', 'updated_at', 'verification_status',
             'verified_by_name'
         ]
@@ -497,7 +511,11 @@ class TraineeOutcomeSubmitSerializer(serializers.ModelSerializer):
         model = TraineeOutcome
         fields = [
             'employment_status', 'employer_name', 'job_role', 'monthly_earning',
-            'employment_type', 'current_district', 'current_state', 'response_notes'
+            'employment_type', 'current_district', 'current_state',
+            'training_relevance', 'non_placement_reason', 'skill_gap', 'attrition_reason',
+            'enterprise_name', 'udyam_registration_number', 'monthly_net_profit',
+            'workers_employed', 'apprenticeship_contract_id',
+            'response_notes'
         ]
 
     # Validates non-negative monthly earnings
@@ -505,6 +523,14 @@ class TraineeOutcomeSubmitSerializer(serializers.ModelSerializer):
         if value is not None and value < 0:
             raise serializers.ValidationError('Monthly earning cannot be negative.')
         return value
+
+
+# Validates public tokenized employer verification action
+class EmployerPlacementVerificationSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices=['confirm', 'dispute'])
+    remarks = serializers.CharField(required=False, allow_blank=True, default='')
+    employer_remarks = serializers.CharField(required=False, allow_blank=True, default='')
+    verified_wage = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
 
 
 # Serializes in-app user notifications and delivery status

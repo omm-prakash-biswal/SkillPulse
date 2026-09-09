@@ -261,6 +261,19 @@
               <span style="color: var(--color-text-muted);">pending actions</span>
             </div>
           </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Wage Uplift %</span>
+              <div class="metric-icon-wrap" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                <i data-lucide="trending-up" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="metric-value" id="metric-wage-uplift" style="color: #10B981;">+61.2%</div>
+            <div class="metric-subtext">
+              <span class="badge-growth" id="metric-wage-uplift-sub">Baseline vs Placed</span>
+            </div>
+          </div>
         </div>
 
         <!-- Charts Grid 1: Wage Progression & Conversion Funnel -->
@@ -269,7 +282,7 @@
             <div class="chart-card-header">
               <div>
                 <div class="chart-card-title" data-i18n="chart_wage_title">Wage progression curve</div>
-                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_wage_sub">Realized earnings vs baseline floor</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_wage_sub">Trainee earnings trajectory vs regional floor</div>
               </div>
             </div>
             <div class="chart-container">
@@ -281,7 +294,7 @@
             <div class="chart-card-header">
               <div>
                 <div class="chart-card-title" data-i18n="chart_funnel_title">Cohort conversion funnel</div>
-                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_funnel_sub">End-to-end completion & placement efficiency</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_funnel_sub">Milestone yield from intake to 12mo retention</div>
               </div>
             </div>
             <div class="chart-container">
@@ -296,7 +309,7 @@
             <div class="chart-card-header">
               <div>
                 <div class="chart-card-title" data-i18n="chart_providers_title">Provider pulse leaderboard</div>
-                <div style="font-size: 0.8rem; color: var(--color-text-muted);">Placement & retention rates by district hub</div>
+                <div style="font-size: 0.8rem; color: var(--color-text-muted);" data-i18n="chart_providers_sub">Comparative placement and retention metrics</div>
               </div>
             </div>
             <div class="chart-container">
@@ -314,6 +327,20 @@
             <div class="chart-container">
               <canvas id="nonPlacementCanvas"></canvas>
             </div>
+          </div>
+        </div>
+
+        <!-- Curricular Skill Gaps & Alignment Diagnostics -->
+        <div class="chart-card" style="margin-top: 1.5rem;">
+          <div class="chart-card-header">
+            <div>
+              <div class="chart-card-title">Curricular Skill Gaps Flagged by Employers & Trainees</div>
+              <div style="font-size: 0.8rem; color: var(--color-text-muted);">Specific capability deficits flagged during interview assessments & follow-ups</div>
+            </div>
+            <span class="badge badge-teal">Live Diagnostic</span>
+          </div>
+          <div class="chart-container" style="height: 260px;">
+            <canvas id="skillGapCanvas"></canvas>
           </div>
         </div>
       </section>

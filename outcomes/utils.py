@@ -729,14 +729,25 @@ def seed_default_demo_data():
                 'stage': item['stage'],
                 'consent_status': item['consent_status'],
                 'assigned_trainer': trainer_user,
-                'user': item['user']
+                'user': item['user'],
+                'baseline_wage': item.get('baseline_wage', 9800.0),
+                'alternate_phone_number': item.get('alternate_phone', '+91 98200 12345'),
+                'secondary_contact_name': item.get('secondary_name', 'Guardian / Family Contact'),
+                'secondary_contact_relation': item.get('secondary_rel', 'Family Member')
             }
         )
         if created:
             results['trainees'] += 1
-        elif trainee.assigned_trainer != trainer_user:
-            trainee.assigned_trainer = trainer_user
-            trainee.save(update_fields=['assigned_trainer'])
+        else:
+            if trainee.assigned_trainer != trainer_user:
+                trainee.assigned_trainer = trainer_user
+                trainee.save(update_fields=['assigned_trainer'])
+            if not trainee.baseline_wage or trainee.baseline_wage == 0:
+                trainee.baseline_wage = 9800.0
+                trainee.alternate_phone_number = '+91 98200 12345'
+                trainee.secondary_contact_name = 'Guardian / Family Contact'
+                trainee.secondary_contact_relation = 'Family Member'
+                trainee.save(update_fields=['baseline_wage', 'alternate_phone_number', 'secondary_contact_name', 'secondary_contact_relation'])
 
         # Safely reuse existing consent record or create new one if none exists without deleting historical duplicates
         consent = TraineeConsent.objects.filter(
@@ -765,7 +776,10 @@ def seed_default_demo_data():
                 'wage': p_info['wage'],
                 'source': p_info['source'],
                 'validation_status': p_info['validation_status'],
-                'start_date': timezone.now().date() - timedelta(days=90)
+                'start_date': timezone.now().date() - timedelta(days=90),
+                'training_relevance': p_info.get('training_relevance', 'directly_related'),
+                'employer_contact_email': p_info.get('employer_contact_email', 'hr@suryapower.com'),
+                'employer_contact_phone': p_info.get('employer_contact_phone', '+91 20 5500 1234')
             }
         )
         if p_created:
@@ -915,6 +929,7 @@ def seed_default_demo_data():
                 'employment_type': 'Formal Employment',
                 'current_district': 'Pune',
                 'current_state': 'Maharashtra',
+                'training_relevance': 'directly_related',
                 'response_notes': 'Verified through employer offer letter and salary slip.',
                 'verification_status': 'verified',
                 'verified_by': trainer_user

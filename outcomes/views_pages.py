@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Placement
 
 # Redirects incoming visitors to the appropriate dashboard or login screen
 def index_view(request):
@@ -62,4 +63,11 @@ def profile_page(request):
 # Renders the public certificate verification page for checking credential authenticity
 def certificate_verify_page(request, verification_token):
     return render(request, 'certificate_verify.html', {'verification_token': verification_token})
+
+
+# Renders the public employer placement verification portal
+def employer_verify_page(request, token):
+    placement = Placement.objects.filter(employer_verification_token=token).select_related('trainee').first()
+    return render(request, 'employer_verify.html', {'token': token, 'placement': placement})
+
 

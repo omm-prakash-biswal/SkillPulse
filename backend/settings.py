@@ -20,7 +20,7 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 if not DEBUG and (not SECRET_KEY or 'insecure' in SECRET_KEY.lower() or 'default' in SECRET_KEY.lower()):
     raise RuntimeError("Production security error: Insecure or default SECRET_KEY detected with DEBUG=False.")
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,.vercel.app').split(',') if host.strip()]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,testserver,.vercel.app').split(',') if host.strip()]
 
 # Application definition
 INSTALLED_APPS = [

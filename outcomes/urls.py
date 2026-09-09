@@ -98,4 +98,8 @@ urlpatterns = [
     path('api/notifications/', views_api.NotificationListAPIView.as_view(), name='api_notifications_list'),
     path('api/notifications/<int:pk>/read/', views_api.NotificationMarkReadAPIView.as_view(), name='api_notification_mark_read'),
     path('api/notifications/read-all/', views_api.NotificationMarkReadAPIView.as_view(), name='api_notifications_mark_all_read'),
+
+    # Public 1-Click Employer Verification
+    path('employer/verify/<str:token>/', views_pages.employer_verify_page, name='employer_verify_page'),
+    path('api/employer/verify/<str:token>/', views_api.EmployerPlacementVerifyAPIView.as_view(), name='api_employer_placement_verify'),
 ]

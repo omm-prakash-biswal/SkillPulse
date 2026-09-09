@@ -4,7 +4,7 @@ import uuid
 import secrets
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils import timezone
 from django.db import transaction, connection
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -27,7 +27,7 @@ from .serializers import (
     CourseSerializer, CourseCreateUpdateSerializer, CourseApplicationSerializer,
     CourseApplicationReviewSerializer, EnrollmentSerializer, EnrollmentUpdateSerializer,
     CertificateSerializer, TraineeOutcomeSerializer, TraineeOutcomeSubmitSerializer,
-    NotificationSerializer
+    NotificationSerializer, EmployerPlacementVerificationSerializer
 )
 from .utils import (
     send_email_otp, verify_email_otp, log_audit_event, seed_default_demo_data,
@@ -564,8 +564,16 @@ class TrainerDashboardAPIView(APIView):
         scoped_placements = Placement.objects.filter(trainee__in=scoped_trainees, wage__isnull=False)
         avg_wage = scoped_placements.aggregate(Avg('wage'))['wage__avg'] or 0.0
 
+        # Dynamic baseline wage calculation & wage uplift %
+        baseline_qs = scoped_trainees.filter(baseline_wage__gt=0)
+        avg_baseline = baseline_qs.aggregate(Avg('baseline_wage'))['baseline_wage__avg'] or 9800.0
+        avg_baseline_val = float(avg_baseline)
+        placed_wage_val = float(avg_wage) if avg_wage else 16000.0
+        wage_uplift_pct = round(((placed_wage_val - avg_baseline_val) / avg_baseline_val * 100), 1) if avg_baseline_val > 0 else 0.0
+
         scoped_followups = get_scoped_follow_ups(request.user)
         urgent_count = scoped_followups.filter(status__in=['queued', 'needs_assistance', 'rescheduled']).count()
+        escalated_count = scoped_followups.filter(escalated_to_mobilizer=True).count()
 
         outcome_route = [
             {'stage': 'Enrolled', 'count': enrolled_cnt, 'display': f"{enrolled_cnt}"},
@@ -580,7 +588,14 @@ class TrainerDashboardAPIView(APIView):
             'retention_rate': {'value': retention_pct, 'growth': 'Verified'},
             'median_wage': {'value': round(avg_wage, 2) if avg_wage > 0 else None, 'growth': 'Recorded'},
             'needs_followup': {'value': urgent_count, 'growth': f"{urgent_count} in queue", 'urgent': f"{urgent_count} in queue"},
-            'needs_follow_up': {'value': urgent_count, 'growth': f"{urgent_count} in queue", 'urgent': f"{urgent_count} in queue"}
+            'needs_follow_up': {'value': urgent_count, 'growth': f"{urgent_count} in queue", 'urgent': f"{urgent_count} in queue"},
+            'wage_uplift': {
+                'value': f"+{wage_uplift_pct}%",
+                'growth': f"Baseline ₹{int(avg_baseline_val):,} → Placed ₹{int(placed_wage_val):,}",
+                'baseline': int(avg_baseline_val),
+                'placed': int(placed_wage_val)
+            },
+            'mobilizer_escalated': {'value': escalated_count, 'growth': f"{escalated_count} alternate"}
         }
 
         funnel_chart = {
@@ -593,6 +608,20 @@ class TrainerDashboardAPIView(APIView):
                 round((placed_cnt / enrolled_cnt * 100), 1) if enrolled_cnt else 0,
                 round((retained_cnt / enrolled_cnt * 100), 1) if enrolled_cnt else 0,
             ]
+        }
+
+        # Dynamic Training Relevance Calculation
+        relevance_counts = {
+            'directly_related': Placement.objects.filter(trainee__in=scoped_trainees, training_relevance='directly_related').count(),
+            'partially_related': Placement.objects.filter(trainee__in=scoped_trainees, training_relevance='partially_related').count(),
+            'unrelated': Placement.objects.filter(trainee__in=scoped_trainees, training_relevance='unrelated').count(),
+        }
+        total_rel = sum(relevance_counts.values()) or 1
+        training_relevance = {
+            'directly_related_pct': round((relevance_counts['directly_related'] / total_rel * 100), 1),
+            'partially_related_pct': round((relevance_counts['partially_related'] / total_rel * 100), 1),
+            'unrelated_pct': round((relevance_counts['unrelated'] / total_rel * 100), 1),
+            'counts': relevance_counts
         }
 
         # Dynamic Provider Pulse
@@ -615,16 +644,63 @@ class TrainerDashboardAPIView(APIView):
         if not providers_pulse:
             providers_pulse = [{'name': 'Saksham', 'placement': 78, 'retention': 69, 'district': 'Pune'}]
 
-        avg_val = float(avg_wage) if avg_wage else 16000
         wage_chart = {
-            'labels': ['Before', '3 months', '6 months', '12 months'],
-            'trainee_wages': [9800, int(avg_val * 0.8), int(avg_val * 0.9), int(avg_val)],
+            'labels': ['Before (Baseline)', '3 months', '6 months', '12 months'],
+            'trainee_wages': [int(avg_baseline_val), int(placed_wage_val * 0.85), int(placed_wage_val * 0.95), int(placed_wage_val)],
             'wage_floor': [10500, 10500, 10500, 10500]
         }
 
+        # Dynamic Non-Placement Reasons
+        np_groups = TraineeOutcome.objects.filter(
+            enrollment__trainee__in=scoped_trainees,
+            non_placement_reason__isnull=False
+        ).values('non_placement_reason').annotate(cnt=Count('id')).order_by('-cnt')
+
+        np_label_map = {
+            'skill_mismatch': 'Skill mismatch',
+            'no_local_demand': 'No local demand',
+            'location_migration': 'Location / migration',
+            'family_social': 'Family / social',
+            'wage_expectations': 'Wage expectations',
+            'continuing_education': 'Higher education',
+            'health_personal': 'Personal / health'
+        }
+
+        if np_groups.exists():
+            np_labels = [np_label_map.get(g['non_placement_reason'], g['non_placement_reason'].title()) for g in np_groups]
+            np_values = [g['cnt'] for g in np_groups]
+        else:
+            np_labels = ['Location / migration', 'Skill mismatch', 'No local demand', 'Family / social', 'Wage expectations']
+            np_values = [29, 23, 19, 16, 13]
+
         non_placement_reasons = {
-            'labels': ['Location / migration', 'Skill mismatch', 'No local demand', 'Family / social', 'Wage expectations'],
-            'values': [29, 23, 19, 16, 13]
+            'labels': np_labels,
+            'values': np_values
+        }
+
+        # Dynamic Skill Gaps Breakdown
+        sg_groups = TraineeOutcome.objects.filter(
+            enrollment__trainee__in=scoped_trainees,
+            skill_gap__isnull=False
+        ).exclude(skill_gap='none').values('skill_gap').annotate(cnt=Count('id')).order_by('-cnt')
+
+        sg_label_map = {
+            'practical_tools': 'Practical Hands-on Tools',
+            'communication_english': 'Communication & Spoken English',
+            'domain_theory': 'Core Technical Domain Theory',
+            'interview_prep': 'Interview Preparedness',
+            'digital_literacy': 'Digital Workplace Software'
+        }
+        if sg_groups.exists():
+            sg_labels = [sg_label_map.get(g['skill_gap'], g['skill_gap'].title()) for g in sg_groups]
+            sg_values = [g['cnt'] for g in sg_groups]
+        else:
+            sg_labels = ['Practical Hands-on Tools', 'Communication & Spoken English', 'Core Technical Domain Theory', 'Interview Preparedness', 'Digital Workplace Software']
+            sg_values = [38, 27, 18, 11, 6]
+
+        skill_gaps_breakdown = {
+            'labels': sg_labels,
+            'values': sg_values
         }
 
         return Response({
@@ -634,7 +710,9 @@ class TrainerDashboardAPIView(APIView):
             'wage_chart': wage_chart,
             'funnel_chart': funnel_chart,
             'providers_pulse': providers_pulse,
-            'non_placement_reasons': non_placement_reasons
+            'training_relevance': training_relevance,
+            'non_placement_reasons': non_placement_reasons,
+            'skill_gaps_breakdown': skill_gaps_breakdown
         })
 
 
@@ -1726,20 +1804,53 @@ class TraineeOutcomeAPIView(APIView):
         serializer = TraineeOutcomeSubmitSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        val_data = serializer.validated_data
         outcome, created = TraineeOutcome.objects.update_or_create(
             enrollment=enrollment,
             defaults={
-                'employment_status': serializer.validated_data['employment_status'],
-                'employer_name': serializer.validated_data.get('employer_name', ''),
-                'job_role': serializer.validated_data.get('job_role', ''),
-                'monthly_earning': serializer.validated_data.get('monthly_earning'),
-                'employment_type': serializer.validated_data.get('employment_type', ''),
-                'current_district': serializer.validated_data.get('current_district', ''),
-                'current_state': serializer.validated_data.get('current_state', ''),
-                'response_notes': serializer.validated_data.get('response_notes', ''),
+                'employment_status': val_data['employment_status'],
+                'employer_name': val_data.get('employer_name', ''),
+                'job_role': val_data.get('job_role', ''),
+                'monthly_earning': val_data.get('monthly_earning'),
+                'employment_type': val_data.get('employment_type', ''),
+                'current_district': val_data.get('current_district', ''),
+                'current_state': val_data.get('current_state', ''),
+                'training_relevance': val_data.get('training_relevance', 'directly_related'),
+                'non_placement_reason': val_data.get('non_placement_reason'),
+                'skill_gap': val_data.get('skill_gap'),
+                'attrition_reason': val_data.get('attrition_reason'),
+                'enterprise_name': val_data.get('enterprise_name', ''),
+                'udyam_registration_number': val_data.get('udyam_registration_number', ''),
+                'monthly_net_profit': val_data.get('monthly_net_profit'),
+                'workers_employed': val_data.get('workers_employed', 0) or 0,
+                'apprenticeship_contract_id': val_data.get('apprenticeship_contract_id', ''),
+                'response_notes': val_data.get('response_notes', ''),
                 'verification_status': 'self_reported'
             }
         )
+
+        # Sync or create Placement if outcome indicates employment/self-employment
+        if val_data['employment_status'] in ['employed', 'self_employed']:
+            emp_name = val_data.get('employer_name') or val_data.get('enterprise_name') or 'Self-Employed'
+            job_title = val_data.get('job_role') or 'Enterprise Owner'
+            emp_type = 'self_employed' if val_data['employment_status'] == 'self_employed' else val_data.get('employment_type', 'formal')
+            Placement.objects.update_or_create(
+                trainee=enrollment.trainee,
+                defaults={
+                    'employer_name': emp_name,
+                    'role': job_title,
+                    'employment_type': emp_type,
+                    'wage': val_data.get('monthly_earning') or val_data.get('monthly_net_profit'),
+                    'source': 'self_reported',
+                    'validation_status': 'pending',
+                    'enterprise_name': val_data.get('enterprise_name', ''),
+                    'udyam_registration_number': val_data.get('udyam_registration_number', ''),
+                    'monthly_net_profit': val_data.get('monthly_net_profit'),
+                    'workers_employed': val_data.get('workers_employed', 0) or 0,
+                    'apprenticeship_contract_id': val_data.get('apprenticeship_contract_id', ''),
+                    'training_relevance': val_data.get('training_relevance', 'directly_related')
+                }
+            )
 
         create_notification(
             user=enrollment.course.trainer,
@@ -2205,9 +2316,83 @@ class TraineePlacementSubmitAPIView(APIView):
 
     def post(self, request):
         data = request.data
+        trainee = None
+        if request.user.is_authenticated:
+            trainee = getattr(request.user, 'trainee_profile', None) or Trainee.objects.filter(user=request.user).first()
+        
+        email = data.get('email', '').strip()
+        field_id = data.get('field_atlas_id', '').strip()
+        if not trainee and (field_id or email):
+            trainee = Trainee.objects.filter(Q(unified_id=field_id) | Q(user__email=email)).first()
+
+        status_choice = data.get('employment_status', 'employed')
+        wage_val = data.get('wage')
+        relevance = data.get('training_relevance', 'directly_related')
+
+        placement = None
+        token = None
+        if trainee:
+            # Persist alternate contact resilience on Trainee record
+            if data.get('alternate_phone_number'):
+                trainee.alternate_phone_number = data.get('alternate_phone_number')
+            if data.get('secondary_contact_name'):
+                trainee.secondary_contact_name = data.get('secondary_contact_name')
+            if data.get('secondary_contact_relation'):
+                trainee.secondary_contact_relation = data.get('secondary_contact_relation')
+            trainee.save(update_fields=['alternate_phone_number', 'secondary_contact_name', 'secondary_contact_relation'])
+
+            emp_name = data.get('employer_name') or data.get('enterprise_name') or 'Self-Employed / Apprentice'
+            job_title = data.get('role') or 'Skilled Professional'
+            emp_type = data.get('employment_type', 'formal')
+
+            placement = Placement.objects.create(
+                trainee=trainee,
+                employer_name=emp_name,
+                role=job_title,
+                employment_type=emp_type,
+                wage=wage_val,
+                source='self_reported',
+                validation_status='pending',
+                employer_contact_email=data.get('employer_contact_email', ''),
+                employer_contact_phone=data.get('employer_contact_phone', ''),
+                enterprise_name=data.get('enterprise_name', ''),
+                udyam_registration_number=data.get('udyam_registration_number', ''),
+                monthly_net_profit=data.get('monthly_net_profit'),
+                workers_employed=data.get('workers_employed', 0) or 0,
+                apprenticeship_contract_id=data.get('apprenticeship_contract_id', ''),
+                training_relevance=relevance
+            )
+            token = str(placement.employer_verification_token)
+
+            # Sync with Enrollment / TraineeOutcome
+            enrollment = Enrollment.objects.filter(trainee=trainee).first()
+            if enrollment:
+                TraineeOutcome.objects.update_or_create(
+                    enrollment=enrollment,
+                    defaults={
+                        'employment_status': status_choice,
+                        'employer_name': emp_name,
+                        'job_role': job_title,
+                        'monthly_earning': wage_val or data.get('monthly_net_profit'),
+                        'employment_type': emp_type,
+                        'current_district': data.get('work_location', trainee.district),
+                        'current_state': trainee.state,
+                        'training_relevance': relevance,
+                        'non_placement_reason': data.get('non_placement_reason'),
+                        'skill_gap': data.get('skill_gap'),
+                        'enterprise_name': data.get('enterprise_name', ''),
+                        'udyam_registration_number': data.get('udyam_registration_number', ''),
+                        'monthly_net_profit': data.get('monthly_net_profit'),
+                        'workers_employed': data.get('workers_employed', 0) or 0,
+                        'apprenticeship_contract_id': data.get('apprenticeship_contract_id', ''),
+                        'verification_status': 'self_reported'
+                    }
+                )
+
         return Response({
             'success': True,
-            'message': 'Placement outcome reported successfully! Submitted for trainer and NSDC verification.',
+            'message': 'Placement outcome reported successfully! Submitted for trainer and employer verification.',
+            'employer_verification_token': token,
             'placement': {
                 'employer_name': data.get('employer_name', 'Tata Consultancy Services'),
                 'role': data.get('role', 'Junior Web Developer'),
@@ -2215,8 +2400,88 @@ class TraineePlacementSubmitAPIView(APIView):
                 'scheme_enrolled': data.get('scheme_enrolled', 'PMKVY 4.0'),
                 'work_location': data.get('work_location', 'Pune, Maharashtra'),
                 'start_date': data.get('start_date', '2026-07-01'),
-                'validation_status': 'submitted'
+                'validation_status': 'pending',
+                'employer_verification_token': token
             }
+        })
+
+
+# Public 1-click tokenized employer placement verification
+class EmployerPlacementVerifyAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, token):
+        placement = Placement.objects.filter(employer_verification_token=token).first()
+        if not placement:
+            raise Http404("Placement verification record not found or link has expired.")
+        return Response({
+            'valid': True,
+            'trainee_name': placement.trainee.name,
+            'trainee_id': placement.trainee.unified_id,
+            'course': placement.trainee.course,
+            'provider': placement.trainee.provider,
+            'employer_name': placement.employer_name,
+            'role': placement.role,
+            'employment_type': placement.get_employment_type_display(),
+            'start_date': placement.start_date,
+            'wage': float(placement.wage) if placement.wage else None,
+            'validation_status': placement.validation_status,
+            'employer_verified_at': placement.employer_verified_at,
+            'training_relevance': placement.get_training_relevance_display()
+        })
+
+    def post(self, request, token):
+        placement = Placement.objects.filter(employer_verification_token=token).first()
+        if not placement:
+            raise Http404("Placement verification record not found or link has expired.")
+        serializer = EmployerPlacementVerificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        action = serializer.validated_data['action']
+        remarks = serializer.validated_data.get('remarks') or serializer.validated_data.get('employer_remarks') or ''
+        verified_wage = serializer.validated_data.get('verified_wage')
+
+        with transaction.atomic():
+            if action == 'confirm':
+                placement.validation_status = 'verified'
+                placement.source = 'employer_confirmed'
+                placement.employer_verified_at = timezone.now()
+                placement.employer_remarks = remarks
+                if verified_wage is not None:
+                    placement.wage = verified_wage
+                placement.save()
+
+                if placement.trainee.stage in ['enrolled', 'trained', 'certified']:
+                    placement.trainee.stage = 'placed'
+                    placement.trainee.save(update_fields=['stage'])
+
+                outcome = TraineeOutcome.objects.filter(enrollment__trainee=placement.trainee).first()
+                if outcome:
+                    outcome.verification_status = 'verified'
+                    if verified_wage is not None:
+                        outcome.monthly_earning = verified_wage
+                    outcome.save(update_fields=['verification_status', 'monthly_earning', 'updated_at'])
+
+                msg = "Placement verified and confirmed by employer."
+            else:
+                placement.validation_status = 'disputed'
+                placement.employer_remarks = remarks
+                placement.employer_verified_at = timezone.now()
+                placement.save()
+
+                outcome = TraineeOutcome.objects.filter(enrollment__trainee=placement.trainee).first()
+                if outcome:
+                    outcome.verification_status = 'disputed'
+                    outcome.save(update_fields=['verification_status', 'updated_at'])
+
+                msg = "Placement status marked as disputed based on employer feedback."
+
+        return Response({
+            'success': True,
+            'message': msg,
+            'validation_status': placement.validation_status,
+            'verification_status': placement.validation_status,
+            'employer_verified_at': placement.employer_verified_at
         })
 
 
@@ -2487,6 +2752,38 @@ class TrainerPlacementConfirmationAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
+        real_placements = Placement.objects.select_related('trainee').order_by('-created_at')[:10]
+        db_items = []
+        for p in real_placements:
+            t = p.trainee
+            db_items.append({
+                'id': p.id,
+                'trainee_name': t.name,
+                'field_atlas_id': t.unified_id,
+                'course_enrolled': t.course,
+                'phone': t.phone_number,
+                'email': t.email,
+                'district': t.district,
+                'state': t.state,
+                'aadhaar_name': t.name,
+                'alternate_phone': t.alternate_phone_number,
+                'secondary_contact': f"{t.secondary_contact_name} ({t.secondary_contact_relation})" if t.secondary_contact_name else '',
+                'got_job': True,
+                'placement': {
+                    'employer_name': p.employer_name,
+                    'job_role': p.role,
+                    'monthly_wage': int(p.wage or 0),
+                    'work_location': p.work_location or t.district,
+                    'date_of_joining': str(p.start_date or '2026-07-01'),
+                    'employment_type': p.employment_type or 'Full-time Regular',
+                    'verification_status': p.validation_status.upper(),
+                    'verified_date': str(p.employer_verified_at) if p.employer_verified_at else 'Pending',
+                    'employer_verification_token': str(p.employer_verification_token) if p.employer_verification_token else '',
+                    'employer_contact_email': p.employer_contact_email,
+                    'employer_contact_phone': p.employer_contact_phone
+                }
+            })
+
         registry = [
             {
                 'id': 1,
@@ -2498,6 +2795,8 @@ class TrainerPlacementConfirmationAPIView(APIView):
                 'district': 'Pune',
                 'state': 'Maharashtra',
                 'aadhaar_name': 'Priya Patel',
+                'alternate_phone': '9820044556',
+                'secondary_contact': 'Ramesh Patel (Father)',
                 'got_job': True,
                 'placement': {
                     'employer_name': 'Tata Consultancy Services',
@@ -2507,7 +2806,10 @@ class TrainerPlacementConfirmationAPIView(APIView):
                     'date_of_joining': '2026-07-01',
                     'employment_type': 'Full-time Regular',
                     'verification_status': 'CONFIRMED',
-                    'verified_date': '2026-09-07'
+                    'verified_date': '2026-09-07',
+                    'employer_verification_token': 'fa7e82b1-4c12-40a1-bf32-e01928471920',
+                    'employer_contact_email': 'hr@tcs-careers.in',
+                    'employer_contact_phone': '02066012000'
                 }
             },
             {
@@ -2679,7 +2981,13 @@ class TrainerPlacementConfirmationAPIView(APIView):
                 'trainer_action_needed': 'Provide extra practical lab session on inverter testing'
             }
         ]
-        return Response({'trainees': registry, 'total': len(registry)})
+        # Combine real database placements with demo registry, deduplicating by field_atlas_id
+        combined_ids = {t['field_atlas_id'] for t in db_items}
+        for item in registry:
+            if item['field_atlas_id'] not in combined_ids:
+                db_items.append(item)
+        final_list = db_items if db_items else registry
+        return Response({'trainees': final_list, 'total': len(final_list)})
 
 
 class TrainerConfirmPlacementActionAPIView(APIView):

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Employer Placement Verification — Field Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/field-atlas.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; background-color: var(--color-parchment);">
+  <header class="glass-header" style="padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--glass-border);">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <a href="/" class="brand-badge" style="text-decoration: none;">
+        <div class="brand-logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title" style="color: var(--color-deep-indigo);">Field Atlas</span>
+          <span class="brand-subtitle">Employer Validation Portal</span>
+        </div>
+      </a>
+      <a href="/login/" class="btn btn-outline btn-sm" style="text-decoration: none;">Sign In</a>
+    </div>
+  </header>
+
+  <main style="flex: 1; max-width: 760px; width: 100%; margin: 2.5rem auto; padding: 0 1.25rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span class="badge badge-teal" style="font-size: 0.75rem; padding: 0.35rem 0.85rem;">OFFICIAL EMPLOYER VALIDATION LINK</span>
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--color-deep-indigo); margin: 0.5rem 0 0.35rem;">Verify Trainee Placement Record</h1>
+      <p style="color: var(--color-text-muted); font-size: 0.95rem;">Validate employment details reported by a certified vocational graduate.</p>
+    </div>
+
+    <div id="verify-loading" style="text-align: center; padding: 3rem 1rem;">
+      <div style="display: inline-block; width: 36px; height: 36px; border: 3px solid rgba(14, 129, 118, 0.2); border-radius: 50%; border-top-color: var(--color-teal); animation: spin 0.8s linear infinite;"></div>
+      <p style="margin-top: 1rem; color: var(--color-text-muted);">Querying verification ledger...</p>
+    </div>
+
+    <div id="placement-card" style="display: none; background: var(--color-surface); border: 2px solid var(--color-teal); border-radius: 12px; overflow: hidden; box-shadow: 0 12px 30px rgba(14, 129, 118, 0.12);">
+      <div style="background: rgba(14, 129, 118, 0.08); padding: 1.1rem 1.5rem; border-bottom: 1px solid rgba(14, 129, 118, 0.2); display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-weight: 700; color: var(--color-deep-indigo);">Placement Verification</span>
+        <span class="badge" id="badge-status" style="background: #FEF3C7; color: #B45309; font-weight: 700;">PENDING HR REVIEW</span>
+      </div>
+      <div style="padding: 1.75rem;">
+        <div style="margin-bottom: 1.25rem;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-text-muted); font-weight: 700;">Trainee</div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: var(--color-deep-indigo);" id="out-trainee-name">—</div>
+          <div style="font-size: 0.8rem; font-family: monospace; color: var(--color-text-secondary);" id="out-trainee-id">—</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: var(--color-parchment); padding: 0.75rem; border-radius: 6px;">
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Employer</div>
+            <div style="font-weight: 700; color: var(--color-deep-indigo);" id="out-employer">—</div>
+          </div>
+          <div style="background: var(--color-parchment); padding: 0.75rem; border-radius: 6px;">
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Role</div>
+            <div style="font-weight: 700; color: var(--color-deep-indigo);" id="out-role">—</div>
+          </div>
+          <div style="background: var(--color-parchment); padding: 0.75rem; border-radius: 6px;">
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Compensation</div>
+            <div style="font-weight: 800; color: var(--color-teal);" id="out-wage">—</div>
+          </div>
+          <div style="background: var(--color-parchment); padding: 0.75rem; border-radius: 6px;">
+            <div style="font-size: 0.72rem; color: var(--color-text-muted);">Training Relevance</div>
+            <div style="font-weight: 700; color: var(--color-deep-indigo);" id="out-relevance">—</div>
+          </div>
+        </div>
+
+        <div id="hr-actions-panel" style="background: rgba(14, 129, 118, 0.05); border: 1px solid rgba(14, 129, 118, 0.2); border-radius: 8px; padding: 1.25rem;">
+          <label style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-bottom: 0.35rem;">Remarks (Optional)</label>
+          <input type="text" id="hr-remarks-input" class="form-control" placeholder="Optional comments from HR" style="width: 100%; margin-bottom: 1rem; padding: 0.5rem;">
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-primary" id="btn-confirm" style="background: var(--color-teal); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 700; cursor: pointer;">Confirm Employment</button>
+            <button class="btn btn-outline" id="btn-dispute" style="color: #E11D48; border: 1px solid #E11D48; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 700; cursor: pointer;">Dispute Record</button>
+          </div>
+        </div>
+
+        <div id="already-verified-state" style="display: none; text-align: center; padding: 1.5rem; background: #ECFDF5; border: 1px solid #10B981; border-radius: 8px;">
+          <h3 style="font-size: 1.15rem; color: #065F46; margin: 0;">Placement Confirmed</h3>
+          <p style="font-size: 0.85rem; color: #047857; margin-top: 0.35rem;" id="verified-confirmation-text">Thank you for validating this record.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="verify-error" style="display: none; background: #FFF1F2; border: 1px solid #FDA4AF; border-radius: 12px; padding: 2rem; text-align: center;">
+      <h3 style="color: #9F1239; margin: 0;">Verification Record Not Found</h3>
+    </div>
+  </main>
+
+  <script>
+    const token = "{{ token }}";
+    async function init() {
+      try {
+        const res = await fetch(`/api/employer/verify/${token}/`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        document.getElementById('out-trainee-name').textContent = data.trainee_name;
+        document.getElementById('out-trainee-id').textContent = data.trainee_id;
+        document.getElementById('out-employer').textContent = data.employer_name;
+        document.getElementById('out-role').textContent = data.role;
+        document.getElementById('out-wage').textContent = data.wage ? '₹' + Number(data.wage).toLocaleString('en-IN') + '/mo' : 'N/A';
+        document.getElementById('out-relevance').textContent = data.training_relevance;
+        
+        if (data.validation_status === 'verified') {
+          document.getElementById('badge-status').textContent = 'VERIFIED BY EMPLOYER';
+          document.getElementById('hr-actions-panel').style.display = 'none';
+          document.getElementById('already-verified-state').style.display = 'block';
+        }
+        document.getElementById('verify-loading').style.display = 'none';
+        document.getElementById('placement-card').style.display = 'block';
+      } catch {
+        document.getElementById('verify-loading').style.display = 'none';
+        document.getElementById('verify-error').style.display = 'block';
+      }
+    }
+    async function submitAct(action) {
+      const remarks = document.getElementById('hr-remarks-input').value.trim();
+      const res = await fetch(`/api/employer/verify/${token}/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action, remarks})
+      });
+      if (res.ok) {
+        document.getElementById('hr-actions-panel').style.display = 'none';
+        document.getElementById('already-verified-state').style.display = 'block';
+        document.getElementById('badge-status').textContent = action === 'confirm' ? 'VERIFIED BY EMPLOYER' : 'DISPUTED BY HR';
+      }
+    }
+    document.getElementById('btn-confirm').onclick = () => submitAct('confirm');
+    document.getElementById('btn-dispute').onclick = () => submitAct('dispute');
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

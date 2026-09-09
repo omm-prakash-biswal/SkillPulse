@@ -88,6 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (wageEl) wageEl.textContent = formatINR(data.metrics.median_wage);
         const followupEl = document.getElementById('metric-urgent-followups');
         if (followupEl) followupEl.textContent = formatNumber(data.metrics.needs_followup || data.metrics.needs_follow_up);
+        const upliftEl = document.getElementById('metric-wage-uplift');
+        const upliftSub = document.getElementById('metric-wage-uplift-sub');
+        if (upliftEl && data.metrics && data.metrics.wage_uplift) {
+          upliftEl.textContent = data.metrics.wage_uplift.value || '+61.2%';
+        }
+        if (upliftSub && data.metrics && data.metrics.wage_uplift && data.metrics.wage_uplift.growth) {
+          upliftSub.textContent = data.metrics.wage_uplift.growth;
+        }
       }
 
       // Render Charts
@@ -96,6 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
         FieldAtlasCharts.renderFunnelChart('funnelConversionCanvas', data.funnel_chart);
         FieldAtlasCharts.renderProviderPulseChart('providerPulseCanvas', data.providers_pulse);
         FieldAtlasCharts.renderNonPlacementChart('nonPlacementCanvas', data.non_placement_reasons);
+        if (FieldAtlasCharts.renderSkillGapChart) {
+          FieldAtlasCharts.renderSkillGapChart('skillGapCanvas', data.skill_gaps_breakdown);
+        }
       }
     } catch (err) {
       console.error('Failed to load overview data:', err);

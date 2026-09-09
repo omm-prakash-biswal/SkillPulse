@@ -774,3 +774,181 @@ class FieldAtlasAPITests(TestCase):
         unread_remaining = Notification.objects.filter(recipient=self.trainer_a, is_read=False).count()
         self.assertEqual(unread_remaining, 0)
 
+    # Tests baseline wage storage, wage uplift percentage, and training relevance analytics
+    def test_baseline_wage_and_wage_uplift_analytics(self):
+        self.client.force_authenticate(user=self.trainer_a)
+
+        # Set baseline wage on intake
+        self.trainee_profile_a.baseline_wage = 10000.0
+        self.trainee_profile_a.stage = 'placed'
+        self.trainee_profile_a.save()
+
+        # Create placed outcome with 20000 wage (100% uplift) and directly_related relevance
+        Placement.objects.create(
+            trainee=self.trainee_profile_a,
+            employer_name='Tata Consultancy Services',
+            role='Junior Web Developer',
+            wage=20000.0,
+            training_relevance='directly_related',
+            source='self_reported',
+            validation_status='verified'
+        )
+
+        res = self.client.get('/api/trainer/dashboard/')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('wage_uplift', res.data['metrics'])
+        self.assertIn('wage_chart', res.data)
+        self.assertIn('training_relevance', res.data)
+
+        uplift_data = res.data['metrics']['wage_uplift']
+        self.assertIn('+', uplift_data['value'])
+        self.assertGreaterEqual(uplift_data['placed'], uplift_data['baseline'])
+        self.assertGreaterEqual(res.data['training_relevance']['counts']['directly_related'], 1)
+
+    # Tests trainee placement survey with alternate contact resilience and token generation
+    def test_trainee_placement_survey_and_alternate_contacts(self):
+        payload = {
+            'email': self.trainee_profile_a.user.email,
+            'field_atlas_id': self.trainee_profile_a.unified_id,
+            'employment_status': 'employed',
+            'employer_name': 'Infosys Limited',
+            'role': 'Cloud Associate',
+            'wage': 24000,
+            'employer_contact_email': 'hr@infosys.com',
+            'employer_contact_phone': '08028520261',
+            'work_location': 'Pune, Maharashtra',
+            'alternate_phone_number': '9820099887',
+            'secondary_contact_name': 'Ramesh Patel',
+            'secondary_contact_relation': 'Father',
+            'training_relevance': 'directly_related'
+        }
+
+        res = self.client.post('/api/trainee/placement-submit/', payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.data['success'])
+        self.assertIsNotNone(res.data['employer_verification_token'])
+
+        # Verify alternate contacts persisted on Trainee record
+        self.trainee_profile_a.refresh_from_db()
+        self.assertEqual(self.trainee_profile_a.alternate_phone_number, '9820099887')
+        self.assertEqual(self.trainee_profile_a.secondary_contact_name, 'Ramesh Patel')
+        self.assertEqual(self.trainee_profile_a.secondary_contact_relation, 'Father')
+
+        # Verify Placement created with verification token
+        placement = Placement.objects.filter(trainee=self.trainee_profile_a, employer_name='Infosys Limited').first()
+        self.assertIsNotNone(placement)
+        self.assertEqual(str(placement.employer_verification_token), res.data['employer_verification_token'])
+        self.assertEqual(placement.employer_contact_email, 'hr@infosys.com')
+
+    # Tests self-employment, nano-job creation, and Udyam MSME ID tracking
+    def test_self_employment_and_diagnostics_submission(self):
+        payload = {
+            'email': self.trainee_profile_a.user.email,
+            'field_atlas_id': self.trainee_profile_a.unified_id,
+            'employment_status': 'self_employed',
+            'enterprise_name': 'Patel Digital Works',
+            'udyam_registration_number': 'UDYAM-MH-12-0012345',
+            'monthly_net_profit': 32000,
+            'workers_employed': 2,
+            'training_relevance': 'directly_related'
+        }
+
+        res = self.client.post('/api/trainee/placement-submit/', payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        placement = Placement.objects.filter(trainee=self.trainee_profile_a, enterprise_name='Patel Digital Works').first()
+        self.assertIsNotNone(placement)
+        self.assertEqual(placement.udyam_registration_number, 'UDYAM-MH-12-0012345')
+        self.assertEqual(placement.monthly_net_profit, 32000)
+        self.assertEqual(placement.workers_employed, 2)
+
+    # Tests public 1-click tokenized employer placement verification (GET and POST confirm/dispute)
+    def test_employer_tokenized_verification_public_endpoint(self):
+        placement = Placement.objects.create(
+            trainee=self.trainee_profile_a,
+            employer_name='Wipro Technologies',
+            role='Systems Engineer',
+            wage=26000,
+            source='self_reported',
+            validation_status='pending',
+            employer_contact_email='campus-hr@wipro.com'
+        )
+        token = str(placement.employer_verification_token)
+
+        # 1. Anonymous GET via token returns trainee record without requiring login
+        self.client.logout()
+        res_get = self.client.get(f'/api/employer/verify/{token}/')
+        self.assertEqual(res_get.status_code, status.HTTP_200_OK)
+        self.assertTrue(res_get.data['valid'])
+        self.assertEqual(res_get.data['trainee_name'], self.trainee_profile_a.name)
+        self.assertEqual(res_get.data['employer_name'], 'Wipro Technologies')
+
+        # 2. Anonymous POST to confirm placement
+        confirm_payload = {
+            'action': 'confirm',
+            'employer_remarks': 'Confirmed full-time regular joining on 2026-07-01'
+        }
+        res_post = self.client.post(f'/api/employer/verify/{token}/', confirm_payload, format='json')
+        self.assertEqual(res_post.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_post.data['verification_status'], 'verified')
+
+        placement.refresh_from_db()
+        self.assertEqual(placement.validation_status, 'verified')
+        self.assertIsNotNone(placement.employer_verified_at)
+        self.assertIn('Confirmed full-time', placement.employer_remarks)
+
+    # Tests non-placement reason aggregation and curricular skill gap diagnostics
+    def test_non_placement_and_skill_gaps_analytics(self):
+        self.client.force_authenticate(user=self.trainer_a)
+
+        course = Course.objects.create(
+            title='Diagnostics Test Course',
+            course_code='DIAG-TEST-01',
+            trainer=self.trainer_a,
+            status='published'
+        )
+        enroll = Enrollment.objects.create(course=course, trainee=self.trainee_profile_a, status='completed')
+
+        TraineeOutcome.objects.update_or_create(
+            enrollment=enroll,
+            defaults={
+                'employment_status': 'unemployed',
+                'non_placement_reason': 'skill_mismatch',
+                'skill_gap': 'practical_tools',
+                'verification_status': 'self_reported'
+            }
+        )
+
+        res = self.client.get('/api/trainer/dashboard/')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('non_placement_reasons', res.data)
+        self.assertIn('skill_gaps_breakdown', res.data)
+        self.assertIn('Skill mismatch', res.data['non_placement_reasons']['labels'])
+        self.assertIn('Practical Hands-on Tools', res.data['skill_gaps_breakdown']['labels'])
+
+    # Tests village mobilizer escalation for unreachable trainees
+    def test_followup_mobilizer_escalation(self):
+        self.client.force_authenticate(user=self.trainer_a)
+
+        follow_up = FollowUp.objects.create(
+            trainee=self.trainee_profile_a,
+            milestone='3_month',
+            channel='call',
+            status='needs_assistance'
+        )
+
+        patch_payload = {
+            'escalated_to_mobilizer': True,
+            'escalation_notes': 'Primary phone switched off; village mobilizer dispatched for home visit.',
+            'reported_wage': 18000
+        }
+
+        res = self.client.patch(f'/api/outcomes/follow-ups/{follow_up.id}/', patch_payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        follow_up.refresh_from_db()
+        self.assertTrue(follow_up.escalated_to_mobilizer)
+        self.assertEqual(follow_up.reported_wage, 18000)
+        self.assertIn('village mobilizer', follow_up.escalation_notes)
+
+
