@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — REST API CLIENT & UI UTILITIES
+ * SKILLPULSE — REST API CLIENT & UI UTILITIES
  * Pure Vanilla JavaScript module for API interaction, CSRF token management, modals, and toasts
  */
 

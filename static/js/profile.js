@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — EDITABLE PROFILE CONTROLLER
+ * SKILLPULSE — EDITABLE PROFILE CONTROLLER
  * Manages user profile fields updating, profile avatar upload, password change,
  * and loading of enrolled or instructed vocational courses
  */

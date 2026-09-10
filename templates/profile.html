@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}My Profile & Account Settings — Field Atlas{% endblock %}
+{% block title %}My Profile & Account Settings — SkillPulse{% endblock %}
 
 {% block content %}
 <div class="app-container" style="background-color: var(--color-parchment); min-height: 100vh;">
@@ -38,7 +38,7 @@
 
         <div>
           <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--color-deep-indigo);">{{ user.full_name }}</h2>
-          <div style="font-size: 0.85rem; color: var(--color-text-muted); font-family: var(--font-mono);">Field Atlas ID: {{ user.field_atlas_id }}</div>
+          <div style="font-size: 0.85rem; color: var(--color-text-muted); font-family: var(--font-mono);">SkillPulse ID: {{ user.field_atlas_id }}</div>
           <div style="margin-top: 0.35rem;">
             <span class="badge badge-teal">{{ user.role|title }}</span>
             <span class="badge badge-indigo">{{ user.provider|default:"National Network" }}</span>

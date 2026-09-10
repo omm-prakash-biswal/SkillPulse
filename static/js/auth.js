@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — AUTHENTICATION & OTP CONTROLLER
+ * SKILLPULSE — AUTHENTICATION & OTP CONTROLLER
  * Handles user login, registration, email OTP dispatch & verification, password reset, and logout
  */
 

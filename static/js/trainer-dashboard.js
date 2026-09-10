@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — TRAINER DASHBOARD INTERACTION CONTROLLER
+ * SKILLPULSE — TRAINER DASHBOARD INTERACTION CONTROLLER
  * Controls Overview metrics, Chart.js graphs, Follow-up queue & outreach simulator,
  * Trainees search/filters/modal creation/consent/CSV export, and Reports downloads
  */
@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (bubbleEl) {
       const channelGreeting = currentChannel === 'whatsapp' ? '👋 Namaste' : 'Hello';
-      bubbleEl.textContent = `${channelGreeting} ${item.trainee_name}, this is Field Atlas checking in on your employment after completing your ${item.trainee_course} training. Could you please share your current work status?`;
+      bubbleEl.textContent = `${channelGreeting} ${item.trainee_name}, this is SkillPulse checking in on your employment after completing your ${item.trainee_course} training. Could you please share your current work status?`;
     }
 
     if (statusNoteEl) {

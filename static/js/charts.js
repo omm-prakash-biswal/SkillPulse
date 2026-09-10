@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — CHART.JS VISUALIZATION ENGINE
+ * SKILLPULSE — CHART.JS VISUALIZATION ENGINE
  * Configures and renders the civic-cartography charts:
  * 1. Wage Progression Line Chart (Realized vs Baseline Floor)
  * 2. Cohort Conversion Funnel (Bar / Step chart)

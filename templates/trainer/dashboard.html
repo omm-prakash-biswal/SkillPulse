@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Field Atlas — Trainer Operations & Outcomes Dashboard{% endblock %}
+{% block title %}SkillPulse — Trainer Operations & Outcomes Dashboard{% endblock %}
 
 {% block content %}
 <div class="app-container">
@@ -16,7 +16,7 @@
           <i data-lucide="compass" style="width: 22px; height: 22px;"></i>
         </div>
         <div class="brand-text-wrap">
-          <span class="brand-title" data-i18n="brand_name">Field Atlas</span>
+          <span class="brand-title" data-i18n="brand_name">SkillPulse</span>
           <span class="brand-subtitle">Outcomes Platform</span>
         </div>
       </a>
@@ -434,7 +434,7 @@
                 <strong style="font-size: 1.05rem; color: var(--color-deep-indigo);" id="preview-trainee-name">Select Participant</strong>
                 <div style="font-size: 0.75rem; color: var(--color-text-muted);" id="preview-trainee-course">Select a row to preview outreach context</div>
               </div>
-              <span class="badge badge-neutral" id="preview-trainee-id">FA-ID</span>
+              <span class="badge badge-neutral" id="preview-trainee-id">SP-ID</span>
             </div>
 
             <!-- Channel Selector Tabs -->
@@ -451,11 +451,11 @@
             <div class="phone-preview-shell">
               <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border);">
                 <div class="avatar-sm" style="background: var(--color-teal); width: 28px; height: 28px; font-size: 0.75rem;">FA</div>
-                <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-deep-indigo);">Field Atlas Outreach Bot (Demo)</div>
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-deep-indigo);">SkillPulse Outreach Bot (Demo)</div>
               </div>
 
               <div class="message-bubble" id="simulator-message-text">
-                Namaste, this is Field Atlas checking in on your employment progress. Could you please share your current work status?
+                Namaste, this is SkillPulse checking in on your employment progress. Could you please share your current work status?
               </div>
 
               <div style="margin-top: 1.5rem;">
@@ -522,7 +522,7 @@
           <div class="table-toolbar">
             <div class="table-search-wrap">
               <i data-lucide="search" class="search-icon" style="width: 16px; height: 16px;"></i>
-              <input type="text" id="trainee-search-input" class="search-input" placeholder="Search by name, Field Atlas ID, or course..." data-i18n-placeholder="search_placeholder">
+              <input type="text" id="trainee-search-input" class="search-input" placeholder="Search by name, SkillPulse ID, or course..." data-i18n-placeholder="search_placeholder">
             </div>
 
             <div class="filter-group">
@@ -744,7 +744,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
           <div class="form-group">
             <label class="form-label" for="new-trainee-id">Unified ID</label>
-            <input type="text" id="new-trainee-id" class="form-control" placeholder="e.g. FA-24-0350" required>
+            <input type="text" id="new-trainee-id" class="form-control" placeholder="e.g. SP-24-0350" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="new-trainee-course">Course</label>
@@ -874,7 +874,7 @@
 <div class="modal-overlay" id="modal-methodology">
   <div class="modal-dialog" style="max-width: 650px;">
     <div class="modal-header">
-      <h3 class="modal-title">Field Atlas Outcome Methodology</h3>
+      <h3 class="modal-title">SkillPulse Outcome Methodology</h3>
       <button class="modal-close-btn" onclick="FieldAtlasAPI.closeModal('modal-methodology')">&times;</button>
     </div>
     <div class="modal-body" style="line-height: 1.6; font-size: 0.9rem; color: var(--color-deep-indigo);">
@@ -885,12 +885,12 @@
 
       <h4 style="color: var(--color-teal); margin-bottom: 0.5rem;">Consent-First Civic Cartography</h4>
       <p style="margin-bottom: 1rem;">
-        Field Atlas operates on strict participant consent. Learners retain full autonomy over their data and can grant or withdraw consent at any time. When consent is withdrawn, learner contact information is instantly purged from active follow-up queues and masked in administrative exports.
+        SkillPulse operates on strict participant consent. Learners retain full autonomy over their data and can grant or withdraw consent at any time. When consent is withdrawn, learner contact information is instantly purged from active follow-up queues and masked in administrative exports.
       </p>
 
       <h4 style="color: var(--color-teal); margin-bottom: 0.5rem;">Aadhaar-Free Unified Identification</h4>
       <p>
-        To prevent unnecessary data accumulation and safeguard participant privacy, Field Atlas uses pseudonymous Unified IDs (e.g. FA-24-0182). Raw Aadhaar numbers, biometric data, or sensitive government credentials are never stored.
+        To prevent unnecessary data accumulation and safeguard participant privacy, SkillPulse uses pseudonymous Unified IDs (e.g. SP-24-0182). Raw Aadhaar numbers, biometric data, or sensitive government credentials are never stored.
       </p>
     </div>
     <div class="modal-footer">

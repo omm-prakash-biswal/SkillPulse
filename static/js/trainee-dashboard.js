@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — TRAINEE PORTAL CONTROLLER
+ * SKILLPULSE — TRAINEE PORTAL CONTROLLER
  * Mobile-first controller managing learner stage timeline, learning records,
  * course discovery, applications, verifiable certificates, and employment outcomes
  */
@@ -626,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Field Atlas Progress Report — ${rep.learner_name}</title>
+          <title>SkillPulse Progress Report — ${rep.learner_name}</title>
           <style>
             body { font-family: 'Plus Jakarta Sans', sans-serif; padding: 40px; color: #1E2749; line-height: 1.6; }
             .header { border-bottom: 3px solid #0E8176; padding-bottom: 15px; margin-bottom: 25px; }
@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </head>
         <body>
           <div class="header">
-            <h2>FIELD ATLAS — LEARNER PROGRESS REPORT</h2>
+            <h2>SKILLPULSE — LEARNER PROGRESS REPORT</h2>
             <p>Unified ID: <strong>${rep.unified_id}</strong> | Generated: ${rep.generated_at}</p>
           </div>
           <div class="row"><span>Learner Name:</span><strong>${rep.learner_name}</strong></div>

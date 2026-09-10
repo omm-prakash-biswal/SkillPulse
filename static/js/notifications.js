@@ -1,5 +1,5 @@
 /*
- * FIELD ATLAS — REAL-TIME IN-APP NOTIFICATION SYSTEM
+ * SKILLPULSE — REAL-TIME IN-APP NOTIFICATION SYSTEM
  * Manages unread badge counter, popover display, item mark-read, and bulk clearance
  */
 
