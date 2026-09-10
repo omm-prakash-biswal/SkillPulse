@@ -693,10 +693,10 @@ def build_deck_v4():
     p_sub1.space_after = Pt(2)
     
     ref_links = [
-        ("PMKVY 4.0 Guidelines", "https://pmkvyofficial.org/"),
+        ("PMKVY 4.0 Guidelines", "https://www.skillindiadigital.gov.in/"),
         ("NCVET Qualification & Credit Standards", "https://ncvet.gov.in/"),
         ("DGT Apprenticeship Tracking (CTS)", "https://dgt.gov.in/"),
-        ("DDU-GKY Longitudinal Tracking SOPs", "https://ddugky.gov.in/"),
+        ("DDU-GKY Longitudinal Tracking SOPs", "https://www.skillindiadigital.gov.in/"),
         ("MeitY DPDP Act 2023 Guidelines", "https://www.meity.gov.in/"),
         ("k-Anonymity Model (Sweeney, 2002)", "https://www.sciencedirect.com/"),
         ("OWASP API Security Top 10", "https://owasp.org/www-project-api-security/")
