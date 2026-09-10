@@ -784,5 +784,6 @@ if (document.readyState === 'loading') {
   FieldAtlasI18N.initLanguageSelector();
 }
 
-// Global Alias
+// Global Aliases
 window.SkillPulseI18N = FieldAtlasI18N;
+window.FieldAtlasI18N = FieldAtlasI18N;

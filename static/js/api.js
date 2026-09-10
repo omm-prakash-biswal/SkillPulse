@@ -3,7 +3,7 @@
  * Pure Vanilla JavaScript module for API interaction, CSRF token management, modals, and toasts
  */
 
-const FieldAtlasAPI = (function() {
+const SkillPulseAPI = (function() {
   'use strict';
 
   // Extracts the Django CSRF token from the browser cookie store
@@ -67,8 +67,19 @@ const FieldAtlasAPI = (function() {
     }
   }
 
+  // Retrieves the configured backend API base URL
+  function getApiBaseUrl() {
+    if (window.FIELD_ATLAS_CONFIG && window.FIELD_ATLAS_CONFIG.API_BASE_URL) {
+      return window.FIELD_ATLAS_CONFIG.API_BASE_URL.replace(/\/+$/, '');
+    }
+    return '';
+  }
+
   // Core asynchronous fetch wrapper managing headers, CSRF token, and standard error handling
   async function request(endpoint, options = {}) {
+    const baseUrl = getApiBaseUrl();
+    const fullUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+
     const defaultHeaders = {
       'Accept': 'application/json',
     };
@@ -82,13 +93,15 @@ const FieldAtlasAPI = (function() {
       defaultHeaders['X-CSRFToken'] = csrfToken;
     }
 
+    // Always include credentials for cross-origin session cookies
+    options.credentials = options.credentials || 'include';
     options.headers = {
       ...defaultHeaders,
       ...(options.headers || {})
     };
 
     try {
-      const response = await fetch(endpoint, options);
+      const response = await fetch(fullUrl, options);
       
       // Handle download responses
       const contentType = response.headers.get('content-type');
@@ -105,41 +118,58 @@ const FieldAtlasAPI = (function() {
       }
       return data;
     } catch (err) {
-      showToast(err.message, 'error');
+      if (!options.silent) {
+        showToast(err.message, 'error');
+      }
       throw err;
     }
   }
 
   // Sends an authenticated HTTP GET request
-  async function get(endpoint, params = {}) {
-    const url = new URL(endpoint, window.location.origin);
+  async function get(endpoint, params = {}, options = {}) {
+    const baseUrl = getApiBaseUrl() || window.location.origin;
+    const fullUrl = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
+    const url = new URL(fullUrl, window.location.origin);
     Object.keys(params).forEach(key => {
       if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
         url.searchParams.append(key, params[key]);
       }
     });
-    return request(url.toString(), { method: 'GET' });
+    return request(url.toString(), { method: 'GET', ...options });
   }
 
   // Sends an authenticated HTTP POST request
-  async function post(endpoint, data = {}) {
+  async function post(endpoint, data = {}, options = {}) {
     const isFormData = data instanceof FormData;
     return request(endpoint, {
       method: 'POST',
-      body: isFormData ? data : JSON.stringify(data)
+      body: isFormData ? data : JSON.stringify(data),
+      ...options
     });
   }
 
   // Sends an authenticated HTTP PATCH request
-  async function patch(endpoint, data = {}) {
+  async function patch(endpoint, data = {}, options = {}) {
     const isFormData = data instanceof FormData;
     return request(endpoint, {
       method: 'PATCH',
-      body: isFormData ? data : JSON.stringify(data)
+      body: isFormData ? data : JSON.stringify(data),
+      ...options
     });
   }
 
+  // Helper to fetch current logged-in user profile
+  async function getCurrentUser() {
+    return get('/api/auth/me/');
+  }
+
+  // Helper to log out
+  async function logout() {
+    return post('/api/auth/logout/');
+  }
+
   return {
+    getApiBaseUrl: getApiBaseUrl,
     getCsrfToken: getCsrfToken,
     showToast: showToast,
     openModal: openModal,
@@ -147,9 +177,13 @@ const FieldAtlasAPI = (function() {
     request: request,
     get: get,
     post: post,
-    patch: patch
+    patch: patch,
+    getCurrentUser: getCurrentUser,
+    logout: logout
   };
 })();
 
 // Attach globally
-window.FieldAtlasAPI = FieldAtlasAPI;
+window.SkillPulseAPI = SkillPulseAPI;
+window.FieldAtlasAPI = SkillPulseAPI;
+

@@ -7,7 +7,7 @@
  * 4. Non-Placement Reasons Diagnostics (Donut Chart)
  */
 
-const FieldAtlasCharts = (function() {
+const SkillPulseCharts = (function() {
   'use strict';
 
   let wageChartInstance = null;
@@ -317,4 +317,5 @@ const FieldAtlasCharts = (function() {
 })();
 
 // Attach globally
-window.FieldAtlasCharts = FieldAtlasCharts;
+window.SkillPulseCharts = SkillPulseCharts;
+window.FieldAtlasCharts = SkillPulseCharts;
