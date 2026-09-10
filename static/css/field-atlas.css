@@ -1247,3 +1247,435 @@ p {
   background: var(--color-teal-light);
   transform: translateY(-2px);
 }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   FEEDBACK & PICTORIAL RATINGS SYSTEM (LOW-LITERACY & VISUAL FIRST)
+   ══════════════════════════════════════════════════════════════════ */
+
+.feedback-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.feedback-kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.feedback-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-teal);
+}
+
+.feedback-kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-teal), #34D399);
+}
+
+.feedback-kpi-card.kpi-amber::after {
+  background: linear-gradient(90deg, #F59E0B, #EF4444);
+}
+
+.feedback-kpi-card.kpi-blue::after {
+  background: linear-gradient(90deg, #3B82F6, #6366F1);
+}
+
+.feedback-kpi-card.kpi-purple::after {
+  background: linear-gradient(90deg, #8B5CF6, #EC4899);
+}
+
+.kpi-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.kpi-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+}
+
+.kpi-score-display {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: var(--color-deep-indigo);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.kpi-score-max {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.kpi-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #F59E0B;
+  font-size: 1.1rem;
+  margin: 0.4rem 0;
+}
+
+.kpi-mood-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.kpi-meter-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-surface-hover);
+  margin-top: 0.75rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.kpi-meter-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #10B981, #059669);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Course Comparison Grid */
+.course-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.top-course-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #F0FDF4 100%);
+  border: 2px solid #86EFAC;
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08);
+}
+
+.top-course-card::before {
+  content: '🏆 TOP RATED';
+  position: absolute;
+  top: -12px;
+  left: 1.5rem;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+}
+
+.needs-attention-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%);
+  border: 2px solid #FCD34D;
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.08);
+}
+
+.needs-attention-card::before {
+  content: '⚠️ NEEDS ACTION & DIAGNOSTICS';
+  position: absolute;
+  top: -12px;
+  left: 1.5rem;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.diagnostic-meter-row {
+  margin-bottom: 0.85rem;
+}
+
+.diagnostic-meter-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-deep-indigo);
+  margin-bottom: 0.35rem;
+}
+
+.diagnostic-meter-track {
+  height: 10px;
+  border-radius: 5px;
+  background: #FEF3C7;
+  overflow: hidden;
+  position: relative;
+}
+
+.diagnostic-meter-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #F59E0B, #EF4444);
+  transition: width 0.6s ease;
+}
+
+.praise-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #DCFCE7;
+  color: #166534;
+  border: 1px solid #BBF7D0;
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin: 0.25rem 0.25rem 0.25rem 0;
+}
+
+/* Interactive Trainee Pictorial Feedback Components */
+.pictorial-step-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.pictorial-step-card:hover {
+  border-color: var(--color-teal);
+}
+
+.pictorial-step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.pictorial-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-teal), #18A89B);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pictorial-step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-deep-indigo);
+  margin: 0;
+}
+
+.pictorial-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-surface-hover);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.85rem;
+  border: 1px solid var(--color-border);
+}
+
+.star-interactive-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  color: #D1D5DB;
+  transition: transform 0.15s ease, color 0.15s ease;
+  line-height: 1;
+}
+
+.star-btn:hover {
+  transform: scale(1.25);
+}
+
+.star-btn.active {
+  color: #F59E0B;
+}
+
+.mood-display-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-deep-indigo);
+  min-width: 170px;
+}
+
+/* One-touch Reason Chips */
+.chips-flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.reason-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.reason-chip-btn:hover {
+  border-color: var(--color-teal);
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
+}
+
+.reason-chip-btn.active {
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+
+.reason-chip-btn.chip-negative.active {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #991B1B;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+}
+
+/* Trainee Review Cards Feed */
+.reviews-feed-container {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.single-review-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: all var(--transition-fast);
+}
+
+.single-review-card:hover {
+  border-color: var(--color-teal);
+  box-shadow: var(--shadow-sm);
+}
+
+.review-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.review-author-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.review-author-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-teal), #1E2749);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-criterion-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.criterion-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--color-surface-hover);
+  color: var(--color-deep-indigo);
+  border: 1px solid var(--color-border);
+}

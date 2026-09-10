@@ -102,4 +102,10 @@ urlpatterns = [
     # Public 1-Click Employer Verification
     path('employer/verify/<str:token>/', views_pages.employer_verify_page, name='employer_verify_page'),
     path('api/employer/verify/<str:token>/', views_api.EmployerPlacementVerifyAPIView.as_view(), name='api_employer_placement_verify'),
+
+    # REST APIs: Student Feedback & Ratings
+    path('api/feedback/submit/', views_api.FeedbackSubmitAPIView.as_view(), name='api_feedback_submit'),
+    path('api/feedback/trainer/analytics/', views_api.TrainerFeedbackAnalyticsAPIView.as_view(), name='api_trainer_feedback_analytics'),
+    path('api/feedback/trainee/my-feedback/', views_api.TraineeMyFeedbackAPIView.as_view(), name='api_trainee_my_feedback'),
 ]
+

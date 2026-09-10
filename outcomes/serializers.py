@@ -4,7 +4,8 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import (
     CustomUser, Trainee, TraineeConsent, Placement, FollowUp, AuditLog, EmailOTP,
-    Course, CourseApplication, Enrollment, Certificate, TraineeOutcome, Notification
+    Course, CourseApplication, Enrollment, Certificate, TraineeOutcome, Notification,
+    TrainerCourseFeedback
 )
 from .utils import normalize_provider_name
 
@@ -546,4 +547,36 @@ class NotificationSerializer(serializers.ModelSerializer):
             'related_course_title', 'related_enrollment'
         ]
         read_only_fields = ['id', 'recipient', 'sender', 'sender_name', 'created_at', 'related_course_title']
+
+
+# Serializes feedback and ratings submitted by trainees for trainers and courses
+class TrainerCourseFeedbackSerializer(serializers.ModelSerializer):
+    trainee_name = serializers.CharField(source='trainee.name', read_only=True)
+    trainer_name = serializers.CharField(source='trainer.get_full_name', read_only=True)
+    course_title = serializers.CharField(source='course.title', read_only=True)
+    course_code = serializers.CharField(source='course.course_code', read_only=True)
+
+    class Meta:
+        model = TrainerCourseFeedback
+        fields = [
+            'id', 'trainee', 'trainee_name', 'trainer', 'trainer_name',
+            'course', 'course_title', 'course_code',
+            'trainer_behavior_rating', 'trainer_teaching_rating', 'trainer_doubt_clearing_rating',
+            'course_practical_rating', 'course_content_rating', 'overall_score',
+            'feedback_tags', 'opinion_text', 'would_recommend', 'status',
+            'created_at'
+        ]
+        read_only_fields = ['id', 'trainee_name', 'trainer_name', 'course_title', 'course_code', 'overall_score', 'created_at']
+
+    def create(self, validated_data):
+        # Calculate overall score as weighted average
+        b = validated_data.get('trainer_behavior_rating', 5)
+        t = validated_data.get('trainer_teaching_rating', 5)
+        d = validated_data.get('trainer_doubt_clearing_rating', 5)
+        p = validated_data.get('course_practical_rating', 5)
+        c = validated_data.get('course_content_rating', 5)
+        avg = round((b + t + d + p + c) / 5.0, 2)
+        validated_data['overall_score'] = avg
+        return super().create(validated_data)
+
 

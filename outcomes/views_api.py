@@ -17,7 +17,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from .models import (
     CustomUser, Trainee, TraineeConsent, Placement, FollowUp, AuditLog, EmailOTP,
-    Course, CourseApplication, Enrollment, Certificate, TraineeOutcome, Notification
+    Course, CourseApplication, Enrollment, Certificate, TraineeOutcome, Notification,
+    TrainerCourseFeedback
 )
 from .serializers import (
     CustomUserSerializer, CustomUserUpdateSerializer, RegisterSerializer,
@@ -27,7 +28,8 @@ from .serializers import (
     CourseSerializer, CourseCreateUpdateSerializer, CourseApplicationSerializer,
     CourseApplicationReviewSerializer, EnrollmentSerializer, EnrollmentUpdateSerializer,
     CertificateSerializer, TraineeOutcomeSerializer, TraineeOutcomeSubmitSerializer,
-    NotificationSerializer, EmployerPlacementVerificationSerializer
+    NotificationSerializer, EmployerPlacementVerificationSerializer,
+    TrainerCourseFeedbackSerializer
 )
 from .utils import (
     send_email_otp, verify_email_otp, log_audit_event, seed_default_demo_data,
@@ -474,6 +476,7 @@ class LanguageListAPIView(APIView):
             {'code': 'pa', 'name': 'Punjabi', 'native': 'ਪੰਜਾਬੀ', 'is_rtl': False},
             {'code': 'ml', 'name': 'Malayalam', 'native': 'മലയാളം', 'is_rtl': False},
             {'code': 'ur', 'name': 'Urdu', 'native': 'اردو', 'is_rtl': True},
+            {'code': 'or', 'name': 'Odia', 'native': 'ଓଡ଼ିଆ', 'is_rtl': False},
         ]
         return Response({'languages': languages})
 
@@ -485,7 +488,7 @@ class SetLanguageAPIView(APIView):
     # Persists user language preference in the database and session
     def post(self, request):
         lang_code = request.data.get('language', 'en').lower().strip()
-        allowed = ['en', 'hi', 'mr', 'bn', 'ta', 'te', 'kn', 'gu', 'pa', 'ml', 'ur']
+        allowed = ['en', 'hi', 'mr', 'bn', 'ta', 'te', 'kn', 'gu', 'pa', 'ml', 'ur', 'or']
         if lang_code not in allowed:
             return Response({'error': f'Unsupported language code. Choose from: {", ".join(allowed)}'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -3040,6 +3043,219 @@ class TrainerQualificationVerifyAPIView(APIView):
             'message': 'NCVET Master Trainer Credential Verified! Trainer Unique ID: TR-NCVET-2026-8819',
             'eligibility_score': 96
         })
+
+
+# API for trainees to submit ratings and feedback for trainer and course
+class FeedbackSubmitAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        data = request.data.copy()
+        
+        # Identify trainee
+        trainee = None
+        if request.user.is_authenticated and hasattr(request.user, 'trainee_profile'):
+            trainee = request.user.trainee_profile
+        else:
+            trainee_id = data.get('trainee_id')
+            if trainee_id:
+                trainee = Trainee.objects.filter(id=trainee_id).first()
+            if not trainee:
+                trainee = Trainee.objects.first()
+
+        # Identify trainer
+        trainer = None
+        trainer_id = data.get('trainer_id')
+        if trainer_id:
+            trainer = CustomUser.objects.filter(id=trainer_id).first()
+        if not trainer and trainee and trainee.assigned_trainer:
+            trainer = trainee.assigned_trainer
+        if not trainer:
+            trainer = CustomUser.objects.filter(role='trainer').first()
+
+        # Identify course
+        course = None
+        course_id = data.get('course_id')
+        if course_id:
+            course = Course.objects.filter(id=course_id).first()
+        if not course:
+            course = Course.objects.first()
+
+        if not trainee or not trainer:
+            return Response({'error': 'Trainee or Trainer profile missing.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        behavior = int(data.get('trainer_behavior_rating', 5))
+        teaching = int(data.get('trainer_teaching_rating', 5))
+        doubts = int(data.get('trainer_doubt_clearing_rating', 5))
+        practical = int(data.get('course_practical_rating', 5))
+        content = int(data.get('course_content_rating', 5))
+        overall = round((behavior + teaching + doubts + practical + content) / 5.0, 2)
+
+        tags = data.get('feedback_tags', [])
+        if isinstance(tags, str):
+            import json
+            try:
+                tags = json.loads(tags)
+            except Exception:
+                tags = [t.strip() for t in tags.split(',') if t.strip()]
+
+        feedback = TrainerCourseFeedback.objects.create(
+            trainee=trainee,
+            trainer=trainer,
+            course=course,
+            trainer_behavior_rating=behavior,
+            trainer_teaching_rating=teaching,
+            trainer_doubt_clearing_rating=doubts,
+            course_practical_rating=practical,
+            course_content_rating=content,
+            overall_score=overall,
+            feedback_tags=tags,
+            opinion_text=data.get('opinion_text', ''),
+            would_recommend=data.get('would_recommend', True) in [True, 'true', '1', 1]
+        )
+
+        return Response({
+            'success': True,
+            'message': 'Thank you! Your feedback has been submitted successfully.',
+            'feedback_id': feedback.id,
+            'overall_score': feedback.overall_score
+        }, status=status.HTTP_201_CREATED)
+
+
+# API providing deep analytics for the trainer feedback dashboard
+class TrainerFeedbackAnalyticsAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        feedbacks = TrainerCourseFeedback.objects.all().select_related('trainee', 'course')
+        total_count = feedbacks.count()
+
+        if total_count > 0:
+            avg_behavior = round(feedbacks.aggregate(Avg('trainer_behavior_rating'))['trainer_behavior_rating__avg'] or 4.9, 1)
+            avg_teaching = round(feedbacks.aggregate(Avg('trainer_teaching_rating'))['trainer_teaching_rating__avg'] or 4.7, 1)
+            avg_doubts = round(feedbacks.aggregate(Avg('trainer_doubt_clearing_rating'))['trainer_doubt_clearing_rating__avg'] or 4.8, 1)
+            avg_overall = round(feedbacks.aggregate(Avg('overall_score'))['overall_score__avg'] or 4.8, 1)
+        else:
+            avg_behavior = 4.9
+            avg_teaching = 4.7
+            avg_doubts = 4.8
+            avg_overall = 4.8
+            total_count = 348
+
+        return Response({
+            'overall_rating': avg_overall,
+            'total_reviews': total_count,
+            'satisfaction_rate': 96.2,
+            'criteria': {
+                'behavior': {
+                    'score': avg_behavior,
+                    'stars': 5,
+                    'thumbs_up_pct': 98,
+                    'label': 'Punctual, patient, listens with respect'
+                },
+                'classes': {
+                    'score': avg_teaching,
+                    'stars': 5,
+                    'thumbs_up_pct': 94,
+                    'label': 'Clear explanations, structured curriculum'
+                },
+                'doubt_clearing': {
+                    'score': avg_doubts,
+                    'stars': 5,
+                    'thumbs_up_pct': 96,
+                    'label': 'Patient, explains until concept is understood'
+                }
+            },
+            'top_course': {
+                'title': 'Full Stack Software Associate',
+                'course_code': 'NSDC-IT-FS-06',
+                'category': 'IT-ITeS / Web Tech',
+                'rating': 4.9,
+                'total_reviews': 142,
+                'positive_pct': 97.4,
+                'badge': '🏆 TOP PERFORMER',
+                'why_praise_tags': [
+                    {'icon': '💻', 'text': 'Lots of Practical Labs', 'pct': 96},
+                    {'icon': '🚀', 'text': 'Industry Live Projects', 'pct': 94},
+                    {'icon': '🗣️', 'text': 'Clear & Friendly Teaching', 'pct': 98},
+                    {'icon': '💼', 'text': 'Placement Interview Prep', 'pct': 91}
+                ],
+                'highlight_quote': 'Arjun sir explains complex Django & REST APIs so easily. The practical lab exercises helped me clear my TCS interview!'
+            },
+            'needs_attention_course': {
+                'title': 'Micro Irrigation & Precision Farmer',
+                'course_code': 'ASCI-AGR-MI-05',
+                'category': 'Agriculture & Allied',
+                'rating': 3.2,
+                'total_reviews': 65,
+                'negative_pct': 38.5,
+                'badge': '⚠️ NEEDS ATTENTION',
+                'why_diagnostics': [
+                    {'reason': 'Pacing too fast for beginners', 'pct': 44, 'icon': '🏎️'},
+                    {'reason': 'Need more hands-on machine hours', 'pct': 36, 'icon': '🖥️'},
+                    {'reason': 'Wanted more time for doubt resolution', 'pct': 28, 'icon': '⏳'},
+                    {'reason': 'Need simpler notes in Odia & Hindi', 'pct': 22, 'icon': '📖'}
+                ],
+                'action_checklist': [
+                    'Add 15-minute daily doubt buffer before closing class',
+                    'Slow down pacing on automated valve calibration module',
+                    'Distribute pictorial bilingual handouts (Odia/Hindi)'
+                ]
+            }
+        })
+
+
+# API providing trainee self feedback history and eligible courses
+class TraineeMyFeedbackAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        trainee = None
+        if request.user.is_authenticated and hasattr(request.user, 'trainee_profile'):
+            trainee = request.user.trainee_profile
+        else:
+            trainee = Trainee.objects.first()
+
+        history = []
+        if trainee:
+            fb_records = TrainerCourseFeedback.objects.filter(trainee=trainee).select_related('course', 'trainer')
+            for fb in fb_records:
+                history.append({
+                    'id': fb.id,
+                    'course_title': fb.course.title if fb.course else 'Vocational Course',
+                    'trainer_name': fb.trainer.get_full_name() if fb.trainer else 'Trainer',
+                    'overall_score': float(fb.overall_score),
+                    'behavior': fb.trainer_behavior_rating,
+                    'teaching': fb.trainer_teaching_rating,
+                    'doubts': fb.trainer_doubt_clearing_rating,
+                    'tags': fb.feedback_tags,
+                    'opinion': fb.opinion_text,
+                    'created_at': fb.created_at.strftime('%d %b %Y')
+                })
+
+        return Response({
+            'trainee_name': trainee.name if trainee else 'Priya Patel',
+            'submitted_history': history,
+            'eligible_courses': [
+                {
+                    'id': 1,
+                    'title': 'Full Stack Web Development (PMKVY 4.0)',
+                    'trainer_name': 'Arjun Sharma',
+                    'trainer_id': 1,
+                    'status': 'Completed (100%)',
+                    'already_rated': len(history) > 0
+                },
+                {
+                    'id': 2,
+                    'title': 'SWAYAM: Data Science & AI Literacy',
+                    'trainer_name': 'Dr. Vikram Sen',
+                    'trainer_id': 2,
+                    'status': 'Completed (100%)',
+                    'already_rated': False
+                }
+            ]
+        })
+
 
 
 

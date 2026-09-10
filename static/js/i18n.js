@@ -70,7 +70,47 @@ const FieldAtlasI18N = (function() {
       trainee_download_report: "Download My Progress Report",
       save_changes: "Save Changes",
       cancel: "Cancel",
-      search_placeholder: "Search by name, Field Atlas ID, or course..."
+      search_placeholder: "Search by name, Field Atlas ID, or course...",
+      nav_step1: "1. Dashboard",
+      nav_step2: "2. Courses of Trainer",
+      nav_step3: "3. Confirmation",
+      nav_step4: "4. Trainer Qualification",
+      nav_feedback: "Feedback & Ratings",
+      nav_pulse: "Programme Pulse",
+      nav_trainees_dir: "Trainees Directory",
+      nav_recovery: "Dark-Zone Recovery",
+      nav_settings: "Settings",
+      trainee_nav_1: "1. Dashboard & Streak",
+      trainee_nav_2: "2. Government Courses",
+      trainee_nav_3: "3. Learning Record",
+      trainee_nav_4: "4. Certificates",
+      trainee_nav_5: "5. Placement Details",
+      trainee_nav_6: "6. Feedback & Ratings",
+      feedback_section_title: "Student Feedback & Ratings",
+      feedback_section_sub: "Visual ratings and feedback given by enrolled students",
+      kpi_overall_score: "Overall Trainer Score",
+      kpi_behavior_label: "Trainer Behavior & Respect",
+      kpi_teaching_label: "Class & Teaching Quality",
+      kpi_doubts_label: "Doubt Clearing & Help",
+      top_course_title: "Highest Rated Course",
+      top_course_badge: "TOP PERFORMER",
+      needs_attention_title: "Needs Attention Course",
+      needs_attention_badge: "NEEDS ACTION",
+      why_diagnostics_title: "Why Students Struggled (Diagnostics)",
+      reason_pacing: "Taught Too Fast",
+      reason_labs: "Need More Practical Lab Time",
+      reason_doubts: "Wanted More Doubt Resolution",
+      reason_notes: "Need Notes in Local Language",
+      trainee_feedback_title: "Rate Your Trainer & Course Experience",
+      trainee_feedback_sub: "Simple one-tap pictorial rating to help your trainer and classmates",
+      select_course_label: "Select Completed Course",
+      btn_submit_feedback: "Submit My Feedback",
+      submitted_history_title: "My Past Feedback Submissions",
+      mood_outstanding: "Outstanding & Very Respectful!",
+      mood_good: "Good & Helpful",
+      mood_average: "Average / Okay",
+      mood_needs_improvement: "Needs Improvement",
+      mood_poor: "Not Satisfied" 
     },
     hi: {
       brand_name: "फील्ड एटलस",
@@ -133,7 +173,47 @@ const FieldAtlasI18N = (function() {
       trainee_download_report: "मेरी प्रगति रिपोर्ट डाउनलोड करें",
       save_changes: "परिवर्तन सहेजें",
       cancel: "रद्द करें",
-      search_placeholder: "नाम, फील्ड एटलस आईडी, या कोर्स से खोजें..."
+      search_placeholder: "नाम, फील्ड एटलस आईडी, या कोर्स से खोजें...",
+      nav_step1: "1. डैशबोर्ड",
+      nav_step2: "2. ट्रेनर के पाठ्यक्रम",
+      nav_step3: "3. पुष्टिकरण",
+      nav_step4: "4. ट्रेनर योग्यता",
+      nav_feedback: "प्रतिक्रिया और रेटिंग",
+      nav_pulse: "प्रोग्राम पल्स",
+      nav_trainees_dir: "शिक्षार्थी डायरेक्टरी",
+      nav_recovery: "डार्क-ज़ोन रिकवरी",
+      nav_settings: "सेटिंग्स",
+      trainee_nav_1: "1. डैशबोर्ड और स्ट्रीक",
+      trainee_nav_2: "2. सरकारी पाठ्यक्रम",
+      trainee_nav_3: "3. शिक्षण रिकॉर्ड",
+      trainee_nav_4: "4. प्रमाण पत्र",
+      trainee_nav_5: "5. प्लेसमेंट विवरण",
+      trainee_nav_6: "6. प्रतिक्रिया और रेटिंग",
+      feedback_section_title: "छात्र प्रतिक्रिया और रेटिंग",
+      feedback_section_sub: "नामांकित छात्रों द्वारा दी गई दृश्य रेटिंग और संतुष्टि मेट्रिक्स",
+      kpi_overall_score: "कुल ट्रेनर स्कोर",
+      kpi_behavior_label: "ट्रेनर का व्यवहार और सम्मान",
+      kpi_teaching_label: "कक्षा और शिक्षण गुणवत्ता",
+      kpi_doubts_label: "शंका समाधान और सहायता",
+      top_course_title: "सर्वोच्च रेटिंग वाला पाठ्यक्रम",
+      top_course_badge: "🏆 सर्वश्रेष्ठ प्रदर्शन",
+      needs_attention_title: "सुधार योग्य पाठ्यक्रम",
+      needs_attention_badge: "⚠️ सुधार आवश्यक",
+      why_diagnostics_title: "छात्रों की परेशानी के कारण (विश्लेषण)",
+      reason_pacing: "बहुत तेज़ गति से पढ़ाया गया",
+      reason_labs: "प्रैक्टिकल लैब के लिए अधिक समय चाहिए",
+      reason_doubts: "शंका समाधान के लिए अधिक समय चाहिए",
+      reason_notes: "हिंदी/स्थानीय भाषा में सरल नोट्स चाहिए",
+      trainee_feedback_title: "अपने ट्रेनर और पाठ्यक्रम को रेटिंग दें",
+      trainee_feedback_sub: "सरल चित्रात्मक रेटिंग जो आपके ट्रेनर और सहपाठियों की मदद करेगी",
+      select_course_label: "पूर्ण किया गया पाठ्यक्रम चुनें",
+      btn_submit_feedback: "मेरी प्रतिक्रिया सबमिट करें",
+      submitted_history_title: "मेरी पिछली प्रतिक्रिया इतिहास",
+      mood_outstanding: "अत्यंत उत्कृष्ट और सम्मानजनक!",
+      mood_good: "अच्छा और मददगार",
+      mood_average: "सामान्य / ठीक-ठाक",
+      mood_needs_improvement: "सुधार की आवश्यकता",
+      mood_poor: "संतुष्ट नहीं" 
     },
     mr: {
       brand_name: "फील्ड अ‍ॅटलास",
@@ -701,10 +781,146 @@ const FieldAtlasI18N = (function() {
       save_changes: "تبدیلیاں محفوظ کریں",
       cancel: "منسوخ کریں",
       search_placeholder: "نام یا فیلڈ اٹلس آئی ڈی سے تلاش کریں..."
+    },
+    or: {
+      brand_name: "ଫିଲ୍ଡ ଆଟଲାସ୍",
+      workspace: "ସୁଫଳ ଫଳାଫଳ / ଜାତୀୟ କାର୍ଯ୍ୟକ୍ଷେତ୍ର",
+      nav_overview: "ସମୀକ୍ଷା",
+      nav_followups: "ଫଲୋ-ଅପ୍",
+      nav_trainees: "ପ୍ରଶିକ୍ଷାର୍ଥୀ ତାଲିକା",
+      nav_providers: "ପ୍ରଦାତା",
+      nav_reports: "ରିପୋର୍ଟସ୍",
+      nav_profile: "ପ୍ରୋଫାଇଲ୍",
+      nav_logout: "ଲଗ୍ ଆଉଟ୍",
+      hero_eyebrow: "କାର୍ଯ୍ୟକ୍ରମ ସ୍ଥିତି / Q3 2026",
+      hero_title: "ପ୍ରଶିକ୍ଷଣ ପରବର୍ତ୍ତୀ କାର୍ଯ୍ୟ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ।",
+      hero_desc: "ପ୍ରଶିକ୍ଷଣରୁ ସ୍ଥାୟୀ ନିଯୁକ୍ତି ପର୍ଯ୍ୟନ୍ତ ଯାତ୍ରା ଦେଖନ୍ତୁ।",
+      btn_export_brief: "ଇମ୍ପାକ୍ଟ ବ୍ରିଫ୍ ରପ୍ତାନି କରନ୍ତୁ",
+      btn_view_methodology: "ପଦ୍ଧତି ଦେଖନ୍ତୁ",
+      privacy_note: "ସମ୍ମତି-ଆଧାରିତ ଡିଜାଇନ୍ · ଆଧାର ଡାଟା ସୁରକ୍ଷିତ",
+      route_enrolled: "ନାମାଙ୍କିତ",
+      route_trained: "ପ୍ରଶିକ୍ଷିତ",
+      route_certified: "ପ୍ରମାଣିତ",
+      route_placed: "ନିଯୁକ୍ତ",
+      route_retained: "ସ୍ଥାୟୀ",
+      metric_active: "ସକ୍ରିୟ ପ୍ରଶିକ୍ଷାର୍ଥୀ",
+      metric_retention: "12-ମାସ ସ୍ଥାୟିତ୍ୱ",
+      metric_wage: "ମଧ୍ୟବର୍ତ୍ତୀ ବେତନ",
+      metric_followup: "ସହାୟତା ଆବଶ୍ୟକ",
+      chart_wage_title: "ବେତନ ବୃଦ୍ଧି ଗ୍ରାଫ୍",
+      chart_wage_sub: "ପ୍ରକୃତ ରୋଜଗାର",
+      chart_funnel_title: "ରୂପାନ୍ତରଣ ଫନେଲ୍",
+      chart_funnel_sub: "ସମାପ୍ତି ଓ ନିଯୁକ୍ତି ଦକ୍ଷତା",
+      chart_providers_title: "ପ୍ରଦାତା ପ୍ରଦର୍ଶନ ତାଲିକା",
+      chart_diagnostics_title: "ଅଣ-ନିଯୁକ୍ତି ବିଶ୍ଳେଷଣ",
+      followup_heading: "ସାଧାରଣ ସମ୍ପର୍କ। ଦୀର୍ଘକାଳୀନ ଫଳାଫଳ।",
+      followup_summary: "124 ଜଣଙ୍କୁ ସହାୟତା ଆବଶ୍ୟକ · 72% ସମାଧାନ",
+      btn_working: "କାର୍ଯ୍ୟରତ",
+      btn_own_work: "ନିଜର ବ୍ୟବସାୟ",
+      btn_need_help: "ସାହାଯ୍ୟ ଆବଶ୍ୟକ",
+      btn_send_now: "ବାର୍ତ୍ତା ପଠାନ୍ତୁ",
+      btn_seed_demo: "ଡେମୋ ଡାଟା ଲୋଡ୍",
+      btn_new_trainee: "ନୂତନ ପ୍ରଶିକ୍ଷାର୍ଥୀ",
+      btn_export_csv: "CSV ଡାଉନଲୋଡ୍",
+      filter_all_providers: "ସମସ୍ତ ପ୍ରଦାତା",
+      filter_all_stages: "ସମସ୍ତ ପର୍ଯ୍ୟାୟ",
+      filter_all_consents: "ସମସ୍ତ ସମ୍ମତି",
+      th_learner: "ପ୍ରଶିକ୍ଷାର୍ଥୀ",
+      th_stage: "ବର୍ତ୍ତମାନର ପର୍ଯ୍ୟାୟ",
+      th_provider: "ପ୍ରଦାତା",
+      th_signal: "ନିୟୋକ୍ତା ସ୍ଥିତି",
+      th_wage: "ବେତନ",
+      th_updated: "ଶେଷ ଅଦ୍ୟତନ",
+      th_actions: "କାର୍ଯ୍ୟାନୁଷ୍ଠାନ",
+      trainee_welcome: "ସ୍ୱାଗତମ୍,",
+      trainee_progress: "ଆପଣଙ୍କ ଶିକ୍ଷା ଓ ନିଯୁକ୍ତି ଯାତ୍ରା",
+      trainee_consent_label: "ସମ୍ମତି ସ୍ଥିତି:",
+      trainee_consent_active: "ସକ୍ରିୟ ଓ ସୁରକ୍ଷିତ",
+      trainee_consent_withdrawn: "ପ୍ରତ୍ୟାହୃତ",
+      trainee_btn_work: "ମୁଁ କାର୍ଯ୍ୟ କରୁଛି",
+      trainee_btn_business: "ମୋର ନିଜ ବ୍ୟବସାୟ ଅଛି",
+      trainee_btn_support: "ମୋତେ ସହାୟତା ଦରକାର",
+      trainee_download_report: "ପ୍ରଗତି ରିପୋର୍ଟ ଡାଉନଲୋଡ୍ କରନ୍ତୁ",
+      save_changes: "ସଂରକ୍ଷଣ କରନ୍ତୁ",
+      cancel: "ବାତିଲ୍",
+      search_placeholder: "ନାମ, ଆଇଡି କିମ୍ବା କୋର୍ସ ଦ୍ୱାରା ଖୋଜନ୍ତୁ...",
+      nav_step1: "୧. ଡ୍ୟାସବୋର୍ଡ",
+      nav_step2: "୨. ପ୍ରଶିକ୍ଷକଙ୍କ ପାଠ୍ୟକ୍ରମ",
+      nav_step3: "୩. ନିଶ୍ଚିତିକରଣ",
+      nav_step4: "୪. ପ୍ରଶିକ୍ଷକ ଯୋଗ୍ୟତା",
+      nav_feedback: "ମତାମତ ଏବଂ ରେଟିଂ",
+      nav_pulse: "ପ୍ରୋଗ୍ରାମ୍ ପଲ୍ସ",
+      nav_trainees_dir: "ପ୍ରଶିକ୍ଷାର୍ଥୀ ତାଲିକା",
+      nav_recovery: "ଡାର୍କ-ଜୋନ୍ ପୁନରୁଦ୍ଧାର",
+      nav_settings: "ସେଟିଂସ୍",
+      trainee_nav_1: "୧. ଡ୍ୟାସବୋର୍ଡ ଏବଂ ଷ୍ଟ୍ରିକ୍",
+      trainee_nav_2: "୨. ସରକାରୀ ପାଠ୍ୟକ୍ରମ",
+      trainee_nav_3: "୩. ଶିକ୍ଷା ରେକର୍ଡ",
+      trainee_nav_4: "୪. ପ୍ରମାଣପତ୍ର",
+      trainee_nav_5: "୫. ପ୍ଲେସମେଣ୍ଟ ବିବରଣୀ",
+      trainee_nav_6: "୬. ମତାମତ ଏବଂ ରେଟିଂ",
+      feedback_section_title: "ଛାତ୍ର ମତାମତ ଏବଂ ରେଟିଂ",
+      feedback_section_sub: "ପ୍ରଶିକ୍ଷାର୍ଥୀଙ୍କ ପ୍ରତ୍ୟକ୍ଷ ସନ୍ତୋଷ ମାପଦଣ୍ଡ ଏବଂ ପାଠ୍ୟକ୍ରମ ଗୁଣବତ୍ତା",
+      kpi_overall_score: "ସମୁଦାୟ ପ୍ରଶିକ୍ଷକ ସ୍କୋର",
+      kpi_behavior_label: "ଆଚରଣ ଏବଂ ସମ୍ମାନ",
+      kpi_teaching_label: "ଶିକ୍ଷାଦାନ ଓ କ୍ଲାସ୍ ଗୁଣବତ୍ତା",
+      kpi_doubts_label: "ସନ୍ଦେହ ଦୂରୀକରଣ ଓ ସହାୟତା",
+      top_course_title: "ସର୍ବୋତ୍ତମ ରେଟିଂ ପାଠ୍ୟକ୍ରମ",
+      top_course_badge: "🏆 ଶ୍ରେଷ୍ଠ ପ୍ରଦର୍ଶନ",
+      needs_attention_title: "ସୁଧାର ଆବଶ୍ୟକ ପାଠ୍ୟକ୍ରମ",
+      needs_attention_badge: "⚠️ ଧ୍ୟାନ ଦିଅନ୍ତୁ",
+      why_diagnostics_title: "ଛାତ୍ରମାନଙ୍କ ସମସ୍ୟାର କାରଣ (ବିଶ୍ଳେଷଣ)",
+      reason_pacing: "ଅଧିକ ଦ୍ରୁତ ଗତିରେ ପଢ଼ାଗଲା",
+      reason_labs: "ପ୍ରାକ୍ଟିକାଲ୍ ଲ୍ୟାବ୍ ପାଇଁ ଅଧିକ ସମୟ ଦରକାର",
+      reason_doubts: "ଅଧିକ ସନ୍ଦେହ ପଚାରିବା ସମୟ ଦରକାର",
+      reason_notes: "ଓଡ଼ିଆ/ହିନ୍ଦୀରେ ସରଳ ନୋଟ୍ସ ଦରକାର",
+      trainee_feedback_title: "ଆପଣଙ୍କ ପ୍ରଶିକ୍ଷକ ଓ କୋର୍ସକୁ ରେଟିଂ ଦିଅନ୍ତୁ",
+      trainee_feedback_sub: "ସରଳ ଚିତ୍ର ଆଧାରିତ ମତାମତ ଯାହା ଆଗାମୀ ଛାତ୍ରମାନଙ୍କୁ ସାହାଯ୍ୟ କରିବ",
+      select_course_label: "ସମାପ୍ତ ହୋଇଥିବା କୋର୍ସ ବାଛନ୍ତୁ",
+      btn_submit_feedback: "ମୋର ମତାମତ ଦାଖଲ କରନ୍ତୁ",
+      submitted_history_title: "ମୋର ପୂର୍ବ ମତାମତ ଇତିହାସ",
+      mood_outstanding: "ଅତ୍ୟନ୍ତ ଉତ୍କୃଷ୍ଟ ଏବଂ ସମ୍ମାନଜନକ!",
+      mood_good: "ଭଲ ଏବଂ ସହାୟକ",
+      mood_average: "ସାଧାରଣ / ଠିକ୍-ଠାକ୍",
+      mood_needs_improvement: "ଉନ୍ନତି ଆବଶ୍ୟକ",
+      mood_poor: "ସନ୍ତୁଷ୍ଟ ନୁହେଁ"
     }
   };
 
   let currentLang = 'en';
+
+  // Label dictionary mapping common UI English strings to i18n keys for auto-translating untagged items
+  const labelMap = {
+    '1. dashboard': 'nav_step1',
+    '2. courses of trainer': 'nav_step2',
+    '3. confirmation': 'nav_step3',
+    '4. trainer qualification': 'nav_step4',
+    'feedback & ratings': 'nav_feedback',
+    'programme pulse': 'nav_pulse',
+    'trainees directory': 'nav_trainees_dir',
+    'follow-ups': 'nav_followups',
+    'reports': 'nav_reports',
+    'dark-zone recovery': 'nav_recovery',
+    'settings': 'nav_settings',
+    'sign out': 'nav_logout',
+    'overview': 'nav_overview',
+    'trainees': 'nav_trainees',
+    'providers': 'nav_providers',
+    '1. dashboard & streak': 'trainee_nav_1',
+    '2. government courses': 'trainee_nav_2',
+    '3. learning record': 'trainee_nav_3',
+    '4. certificates': 'trainee_nav_4',
+    '5. placement details': 'trainee_nav_5',
+    '6. feedback & ratings': 'trainee_nav_6',
+    'student feedback & ratings': 'feedback_section_title',
+    'save changes': 'save_changes',
+    'cancel': 'cancel',
+    'working': 'btn_working',
+    'own work': 'btn_own_work',
+    'need help': 'btn_need_help',
+    'export csv': 'btn_export_csv',
+    'new trainee': 'btn_new_trainee'
+  };
 
   // Returns the localized translation string for a given key, falling back to English
   function t(key) {
@@ -715,6 +931,73 @@ const FieldAtlasI18N = (function() {
       return translations.en[key];
     }
     return key;
+  }
+
+  // Ensures Odia option exists in a select element
+  function ensureOdiaOption(select) {
+    if (!select.querySelector('option[value="or"]')) {
+      const opt = document.createElement('option');
+      opt.value = 'or';
+      opt.textContent = 'ଓଡ଼ିଆ (Odia)';
+      select.appendChild(opt);
+    }
+  }
+
+  // Translates all marked and recognized elements on the active page
+  function translatePage() {
+    // Translate data-i18n attributes
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const text = t(key);
+      if (text) {
+        // If element contains child icons, only replace text nodes
+        if (el.children.length > 0) {
+          Array.from(el.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+              node.nodeValue = ' ' + text.trim() + ' ';
+            }
+          });
+        } else {
+          el.textContent = text;
+        }
+      }
+    });
+
+    // Translate placeholder attributes
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      const text = t(key);
+      if (text) el.placeholder = text;
+    });
+
+    // Translate title attributes
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      const text = t(key);
+      if (text) el.title = text;
+    });
+
+    // Smart fallback translation for recognized navigation labels without explicit data-i18n
+    document.querySelectorAll('.nav-link, .sidebar-nav a, .bottom-nav-item span, .nav-group-label, .btn-ghost, .btn-landing-primary').forEach(el => {
+      if (el.hasAttribute('data-i18n')) return;
+      const text = el.textContent.trim().toLowerCase();
+      if (labelMap[text]) {
+        const key = labelMap[text];
+        el.setAttribute('data-i18n', key);
+        const translated = t(key);
+        if (translated) {
+          if (el.children.length > 0) {
+            Array.from(el.childNodes).forEach(node => {
+              if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+                node.nodeValue = ' ' + translated.trim() + ' ';
+              }
+            });
+          } else {
+            el.textContent = translated;
+          }
+        }
+      }
+    });
   }
 
   // Updates current interface language, applies RTL for Urdu, and updates DOM elements
@@ -729,62 +1012,60 @@ const FieldAtlasI18N = (function() {
     const isRtl = (langCode === 'ur');
     document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
 
-    // Store in localStorage for client caching
+    // Store in localStorage & session cache
     localStorage.setItem('field_atlas_lang', langCode);
+    if (window.FieldAtlasCache) {
+      FieldAtlasCache.set('preferred_language', langCode);
+    }
 
-    // Update all matching UI selectors
+    // Update all matching UI selectors & ensure Odia option
     document.querySelectorAll('.lang-select').forEach(select => {
+      ensureOdiaOption(select);
       select.value = langCode;
     });
 
-    // Translate all elements containing data-i18n attribute
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      const text = t(key);
-      if (text) {
-        el.textContent = text;
-      }
-    });
+    // Execute translation
+    translatePage();
 
-    // Translate placeholder attributes
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-      const key = el.getAttribute('data-i18n-placeholder');
-      const text = t(key);
-      if (text) {
-        el.placeholder = text;
-      }
-    });
-
-    // Persist choice to backend if user is authenticated and persist flag is active
+    // Persist choice to backend silently
     if (persist && window.FieldAtlasAPI) {
-      FieldAtlasAPI.post('/api/i18n/set-language/', { language: langCode }).catch(() => {});
+      FieldAtlasAPI.post('/api/i18n/set-language/', { language: langCode }, { silent: true }).catch(() => {});
     }
 
-    // Dispatch custom event for charts and dynamic widgets to re-render
+    // Dispatch custom event for dynamic components to re-render
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: langCode, isRtl } }));
   }
 
   // Initializes language selector dropdowns across the application
   function initLanguageSelector() {
     const savedLang = localStorage.getItem('field_atlas_lang') || 'en';
-    setLanguage(savedLang, false);
-
+    
     document.querySelectorAll('.lang-select').forEach(select => {
-      select.addEventListener('change', function(e) {
+      ensureOdiaOption(select);
+      select.value = savedLang;
+      // Remove any duplicate listeners
+      select.onchange = function(e) {
         setLanguage(e.target.value, true);
-      });
+      };
     });
+
+    setLanguage(savedLang, false);
   }
 
   return {
     t: t,
     setLanguage: setLanguage,
     initLanguageSelector: initLanguageSelector,
+    translatePage: translatePage,
     getCurrentLanguage: function() { return currentLang; }
   };
 })();
 
 // Initialize language settings when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    FieldAtlasI18N.initLanguageSelector();
+  });
+} else {
   FieldAtlasI18N.initLanguageSelector();
-});
+}

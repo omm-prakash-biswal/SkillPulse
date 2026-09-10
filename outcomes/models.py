@@ -52,6 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('pa', 'Punjabi'),
         ('ml', 'Malayalam'),
         ('ur', 'Urdu'),
+        ('or', 'Odia'),
     )
 
     full_name = models.CharField(max_length=150, verbose_name='Full Name')
@@ -697,4 +698,44 @@ class Notification(models.Model):
     # Returns notification summary
     def __str__(self):
         return f"Notification to {self.recipient.email}: {self.title}"
+
+
+# Stores granular feedback and ratings given by trainees to trainers and courses
+class TrainerCourseFeedback(models.Model):
+    trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE, related_name='feedbacks', verbose_name='Reviewing Trainee')
+    trainer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_feedbacks', verbose_name='Rated Trainer')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True, related_name='feedbacks', verbose_name='Rated Course')
+    
+    # Core ratings (1-5 scale)
+    trainer_behavior_rating = models.PositiveSmallIntegerField(default=5, verbose_name='Trainer Behavior & Attitude (1-5)')
+    trainer_teaching_rating = models.PositiveSmallIntegerField(default=5, verbose_name='Class & Teaching Quality (1-5)')
+    trainer_doubt_clearing_rating = models.PositiveSmallIntegerField(default=5, verbose_name='Doubt Clearing & Help (1-5)')
+    course_practical_rating = models.PositiveSmallIntegerField(default=5, verbose_name='Lab & Practical Quality (1-5)')
+    course_content_rating = models.PositiveSmallIntegerField(default=5, verbose_name='Course Content & Relevance (1-5)')
+    overall_score = models.DecimalField(max_digits=3, decimal_places=2, default=5.00, verbose_name='Computed Overall Rating')
+    
+    # Pictorial sentiment reason tags selected by trainee
+    feedback_tags = models.JSONField(default=list, blank=True, verbose_name='Pictorial Feedback Tags')
+    
+    # Trainee qualitative opinion
+    opinion_text = models.TextField(blank=True, null=True, verbose_name='Trainee Opinion / Notes')
+    would_recommend = models.BooleanField(default=True, verbose_name='Would Recommend Course & Trainer')
+    status = models.CharField(max_length=20, default='submitted', verbose_name='Submission Status')
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Submitted At')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
+
+    class Meta:
+        verbose_name = 'Trainer & Course Feedback'
+        verbose_name_plural = 'Trainer & Course Feedbacks'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['trainer', 'created_at']),
+            models.Index(fields=['course', 'created_at']),
+            models.Index(fields=['trainee', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"Feedback from {self.trainee.name} for {self.trainer.get_full_name()} ({self.overall_score}★)"
+
 
